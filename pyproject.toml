@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "task-tuning"
+version = "0.2.0"
+description = "Composable, evidence-based batch parameter tuning"
+requires-python = ">=3.11"
+dependencies = ["numpy>=1.26", "torch>=2.2"]
+
+[project.optional-dependencies]
+cma = ["cma>=4,<5"]
+cable = ["scipy>=1.11"]
+gl = ["pyglet>=2.1,<3"]
+dev = ["pytest>=8", "ruff>=0.11"]
+
+[project.urls]
+Repository = "https://github.com/SamdianJ/TaskTuning"
+
+[project.scripts]
+task-tuning = "task_tuning.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
