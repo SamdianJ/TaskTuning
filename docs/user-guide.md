@@ -22,7 +22,7 @@ Run these commands from the repository root. On Windows, activate `.venv\Scripts
 | dev | Pytest and Ruff |
 | cable | SciPy for the optional real-cable simulator adapters; Newton is installed separately |
 
-The examples under `examples/` are repository examples, not part of the installed core API. Run them from a checkout. CPU Torch is sufficient for the generic demos and archive verification; cable simulation uses Newton/Warp separately.
+The examples under `examples/` are repository examples, not part of the installed core API. Run them from a checkout. CPU Torch is sufficient for the generic demos and archive verification. The real cable calibration uses Newton VBD with Warp CUDA for physics and CPU Torch for scoring. Install the pinned Newton checkout (plus the SLS patch for stage C) using the [cable environment instructions](../examples/cable_calibration/README.md#5-construct-or-rerun-a-stage-with-newton). The cable extra alone does not install this solver. The recorded environment is documented there separately from the generic package requirements.
 
 ## 2. Run a complete synthetic calibration
 

@@ -59,7 +59,7 @@ See the [class diagram](docs/tuning-class-diagram.md) and [design](docs/generic-
 
 ## Real example: cable calibration
 
-The repository includes processed observations, 14 archived traces, stage-specific Newton adapters, portable configurations, and bilingual HTML reports.
+The cable calibration was performed with **Newton VBD, using NVIDIA Warp on a CUDA GPU**. TaskTuning managed the calibration lifecycle and scored observations with PyTorch. The repository includes processed observations, 14 archived traces, stage-specific Newton adapters, portable configurations, and bilingual HTML reports.
 
 | Stage | What changed | No-plug dynamic RMSE | Formal historical result |
 |---|---|---:|---|
@@ -74,7 +74,18 @@ A → B addresses a boundary hypothesis prompted by left/right residuals. It is 
 - [English report](examples/cable_calibration/reports/cable_calibration_en.html) · [Chinese report](examples/cable_calibration/reports/cable_calibration_zh.html) — download/open locally; GitHub does not render interactive HTML as a webpage.
 - [Historical results](examples/cable_calibration/archive/) · [portable stage configurations](examples/cable_calibration/configs/)
 
-Archive verification needs only the core dependencies. New cable simulations additionally require SciPy, the specified Newton checkout and its dependencies, and the recorded CUDA environment. Raw MOV files, complete search histories and the full Newton source tree are not bundled.
+### Which environment do I need?
+
+| Task | Required environment |
+|---|---|
+| Generic synthetic demos | TaskTuning with NumPy/PyTorch; no Newton |
+| Re-score archived cable traces | Core dependencies on CPU; no Newton or new simulation |
+| Construct or rerun cable calibration | TaskTuning, SciPy, pinned Newton source and Warp; the recorded simulations used CUDA |
+| Run stage C (SLS) | The same stack plus the bundled SLS adaptation applied to the pinned Newton base |
+
+The historical cable environment used Python 3.12.13, Newton 1.6.0.dev0 at commit `d37f4d3d341ccce1e06a1dff21e9a054759b4855`, Warp 1.17.0, and an RTX 5070 Ti Laptop GPU. PyTorch 2.9.1+cpu handled scoring: **CPU PyTorch does not imply CPU Newton simulation**.
+
+Installing `.[cable,cma]` does not install Newton or apply the SLS patch. Follow the [Newton environment and stage setup](examples/cable_calibration/README.md#5-construct-or-rerun-a-stage-with-newton) before using `--run`. Generic quick-start success and archive verification do not validate a new Newton environment. Raw MOV files, complete search histories and the full Newton source tree are not bundled.
 
 ## Codex skills
 

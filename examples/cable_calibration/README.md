@@ -113,13 +113,38 @@ The plugged data initially served as holdout, but later model decisions used the
 
 ## 5. Construct or rerun a stage with Newton
 
-Use a separate environment if an existing Newton installation must remain intact. From the TaskTuning repository root:
+### Recorded simulation environment
+
+The original A/B/B*/C calibration ran locally in a Conda environment named `newton-dev`. The environment name is only a historical label; a new installation may use any name. Newton executes the cable physics, Warp supplies its GPU runtime, and TaskTuning/PyTorch manage calibration and scoring in the same Python process.
+
+| Component | Recorded version or setting | Role |
+|---|---|---|
+| OS / Python | Linux x86_64 / Python 3.12.13 | Historical execution platform |
+| TaskTuning | 0.2.0 | Calibration lifecycle |
+| Newton | 1.6.0.dev0, base commit `d37f4d3d341ccce1e06a1dff21e9a054759b4855` | VBD cable dynamics for A/B/B* |
+| Warp | 1.17.0 | Newton execution on `cuda:0` |
+| GPU | NVIDIA RTX 5070 Ti Laptop GPU | Historical simulation device |
+| PyTorch | 2.9.1+cpu | CPU scoring and calibration tensors |
+| NumPy / CMA | 2.4.3 / 4.5.0 | Numerical utilities and CMA-ES |
+| Stage C solver | Pinned Newton base plus `solver/sls-adapted.patch` | SLS constitutive extension |
+
+Python/Torch/NumPy/CMA versions are retained in each [stage configuration](configs/); solver revisions and patch identity are in [SLS provenance](solver/sls-provenance.json). Warp and GPU settings were recorded in the original experiment specification. This table is a historical environment record, not a complete dependency lockfile or a claim of exact replay on every system.
+
+The `versions.device=cpu` field in exported configurations describes TaskTuning scoring. The separate `template.numeric_settings.device=cuda:0` selects Newton/Warp simulation. A CPU-only PyTorch build can therefore coexist with GPU cable physics.
+
+### Install the pinned solver
+
+Use a separate environment if an existing Newton installation must remain intact. Python 3.12 matches the recorded minor version. Activate that environment and use its `python -m pip` for all installations below. These instructions target the recorded Linux setup; other platforms have not been qualified for this cable example.
+
+The TaskTuning `cable` extra installs SciPy, not Newton. A plain `pip install newton` or the current tip of the SLS branch does not select the tested solver sources. Install the pinned checkout and apply the archived adaptation as shown, rather than substituting a same-named package or another revision.
+
+From the TaskTuning repository root:
 
 ```bash
 python -m pip install -e ".[cable,cma]"
 git clone https://github.com/SamdianJ/newton.git ../newton-task-tuning-base
 git -C ../newton-task-tuning-base checkout --detach d37f4d3d341ccce1e06a1dff21e9a054759b4855
-python -m pip install -e ../newton-task-tuning-base
+python -m pip install -e ../newton-task-tuning-base "warp-lang==1.17.0"
 
 git -C ../newton-task-tuning-base worktree add --detach ../newton-task-tuning-sls d37f4d3d341ccce1e06a1dff21e9a054759b4855
 git -C ../newton-task-tuning-sls apply "$PWD/examples/cable_calibration/solver/sls-adapted.patch"
@@ -129,6 +154,32 @@ python -m examples.cable_calibration.run --stage B --newton-source ../newton-tas
 python -m examples.cable_calibration.run --stage Bstar --newton-source ../newton-task-tuning-base
 python -m examples.cable_calibration.run --stage C --newton-source ../newton-task-tuning-sls
 ```
+
+### Check the active interpreter and runtime
+
+After installation, check the interpreter, imported solver path, package versions, and Warp devices:
+
+```bash
+python - <<'PY'
+import sys
+import newton
+import torch
+import warp as wp
+
+print("Python:", sys.version)
+print("Interpreter:", sys.executable)
+print("Newton:", newton.__file__)
+print("Torch:", torch.__version__, "Torch CUDA available:", torch.cuda.is_available())
+print("Warp:", wp.__version__)
+print("Warp devices:", wp.get_devices())
+PY
+```
+
+For the archived CUDA settings, Warp must discover a CUDA device and the selected `cuda:0` must be usable with its NVIDIA driver. `torch.cuda.is_available() == False` is expected with CPU PyTorch and does not diagnose Warp's CUDA support. The factory separately checks the requested Newton source and pinned VBD hashes. Stage C imports the patched checkout selected by `--newton-source`, even when the base checkout is the environment's editable installation.
+
+This preflight initializes device discovery but does not simulate the cable. Successful imports/device discovery and factory construction are preliminary checks; actual numerical qualification occurs inside a new authorized `run()`.
+
+### Construction versus a new simulation
 
 Without --run these commands only construct a fresh real Tuning. They check three pinned solver-file hashes and import provenance; they do not simulate or create a run directory. Run stages in separate Python processes because Newton imports are process-global.
 
@@ -142,7 +193,9 @@ python -m examples.cable_calibration.run --stage C \
 
 The archived Decision configurations cap their own run time at 740 s (A), 2180 s (B), 480 s (B*), and 2200 s (C). These are formal run budgets, not all historical setup/diagnostic costs. New qualification can stop a run before search. Runtime, recovered values, and acceptance are not guaranteed to reproduce exactly across hardware or dependencies. A nonaccepted result returns CLI exit code 1.
 
-The recorded simulations used Warp CUDA on an RTX 5070 Ti; generic Torch scoring can remain on CPU. --device cpu is an explicit change of numerical conditions and requires new qualification. The factory never reuses a historical qualification pass.
+The recorded simulations used Warp CUDA on an RTX 5070 Ti Laptop GPU; generic Torch scoring can remain on CPU. --device cpu is an explicit change of numerical conditions and requires new qualification. The factory never reuses a historical qualification pass.
+
+During repository preparation, the generic tests, synthetic demos, and archived cable scoring were run locally; all four Newton factories were constructed, but the cable calibration searches were not rerun. Those packaging checks therefore do not constitute a fresh qualification of the Newton/CUDA simulation environment.
 
 ## 6. Repository contents and provenance
 
