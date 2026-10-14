@@ -1,6 +1,6 @@
 # Cable calibration: A → B → C
 
-[Repository](../../README.md) · [Specification](TUNING-SPEC.md) · [English report](reports/cable_calibration_en.html) · [Chinese report](reports/cable_calibration_zh.html)
+[Repository](../../README.md) · [Specification](TUNING-SPEC.md) · [Online English report](https://samdianj.github.io/TaskTuning/examples/cable_calibration/reports/cable_calibration_en.html) · [Online Chinese report](https://samdianj.github.io/TaskTuning/examples/cable_calibration/reports/cable_calibration_zh.html)
 
 This example follows a real 17 cm free cable from a stiffness/damping fit, through a shared clamp-angle correction, to a standard linear solid (SLS) bending model. It includes processed measurements, archived predictions, the actual stage adapters, and factories for new runs.
 
@@ -212,6 +212,6 @@ During repository preparation, the generic tests, synthetic demos, and archived 
 
 Adapter duplication is intentional: historical stages used different source snapshots. The factory assembles these adapters with portable configuration. It performs a fresh run and does not pretend to resume a historical checkpoint.
 
-[provenance.json](archive/provenance.json) retains original source hashes and exported-file hashes. Machine-local paths in records were replaced with descriptive placeholders; report links were relocated; this specification and the asset note were translated/curated in English. The HTML reports embed their figures and can be opened locally after download.
+[provenance.json](archive/provenance.json) retains original source hashes and exported-file hashes. Machine-local paths in records were replaced with descriptive placeholders; report links were relocated; this specification and the asset note were translated/curated in English. The HTML reports embed their figures and can be opened locally after download from [reports](reports/). Their source links open GitHub; the language switch works online or with both files in the same folder.
 
 The SLS implementation originated in the [Newton fork](https://github.com/SamdianJ/newton/tree/SamiulJ/vbd-cable-viscoelasticity), upstream revision 72eca36c70e88d1eb0cc540da7a7a4ea44fb4b98. The bundled patch is the tested adaptation onto the pinned base, not an instruction to use the current branch tip. Newton-derived code retains its upstream notices and [Apache 2.0 license](solver/NEWTON-LICENSE.md); see [SLS provenance](solver/sls-provenance.json).
