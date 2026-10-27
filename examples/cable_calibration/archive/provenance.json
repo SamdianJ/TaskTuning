@@ -180,8 +180,8 @@
     },
     "reports/cable_calibration_en.html": {
       "original_sha256": "6f637d8713d38854b93f8d2b9450edb05a379b63789438306602a82a76dc2fe0",
-      "export_sha256": "b879b77e644860fb71eefddd650f126ccfe7b5484c3a1601a5bd1f62696adce3",
-      "changes": "Source hrefs relocated into this repository; language-switch label translated to English. Source links now target GitHub; added a Pages home link and updated the source-link note. Removed the duplicate Tuning and Skills chapters; renumbered the remaining experiment chapters and focused the introduction on cable results. Pipeline navigation now points to the dedicated design page; experiment figures, data and conclusions are unchanged."
+      "export_sha256": "bf48120742be961a30dafcd426585b1bcd16b14474d9a251380289e9c78fb67a",
+      "changes": "Source hrefs relocated into this repository; language-switch label translated to English. Source links now target GitHub; added a Pages home link and updated the source-link note. Removed the duplicate Tuning and Skills chapters; renumbered the remaining experiment chapters and focused the introduction on cable results. Pipeline navigation now points to the dedicated design page; experiment figures, data and conclusions are unchanged. Headline metrics now compare the matched B* and C objective before/after SLS calibration and its improvement."
     }
   },
   "derived_files": {
