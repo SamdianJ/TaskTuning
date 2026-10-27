@@ -1,0 +1,504 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>校准与评估主线</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+Condensed:wght@600&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<script>(function(){var l='zh';try{var p=location.hash.slice(1).split('-');if(p.indexOf('en')>=0){l='en'}else if(p.indexOf('zh')<0){var v=localStorage.getItem('calib-loop-lang');if(v==='en'||v==='zh')l=v}}catch(e){}document.documentElement.setAttribute('data-lang',l)})();</script>
+<style>
+:root{
+  /* Layout: a one-screen walkthrough. The swimlane is the stage and a panel narrates each step;
+     overview and asks sit side by side, numbered steps stack the zoomed diagram over the panel. */
+  --bg:#F1F4F7;
+  --surface:#FFFFFF;
+  --ink:#152029;
+  --ink-2:#425062;
+  --ink-3:#687586;
+  --line:#D6DDE5;
+  --stage:#FAFBFC;
+  --lane:#F2F5F8;
+  --lane-line:#D2D9E1;
+  --edge:#8E97A2;
+  --veil:rgba(255,255,255,.92);
+  --code:#2459D6;
+  --code-fill:#ECF2FF;
+  --agent:#CC5D10;
+  --agent-fill:#FFF2E8;
+  --human:#66707B;
+  --human-fill:#EEF0F2;
+  --share:#11775A;
+  --share-bg:#E2F3EB;
+  --ask:#6544D6;
+  --ask-bg:#EDE8FC;
+  --offer:#0B6F83;
+  --offer-bg:#DFF1F5;
+  --frame:#4A5868;
+  --frame-bg:#E7ECF1;
+  --f-display:"IBM Plex Sans Condensed","Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono","Noto Sans SC",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0C1117;--surface:#131A22;--ink:#E3E9EF;--ink-2:#B2BDC8;--ink-3:#8793A0;--line:#25303B;
+    --stage:#0F151C;--lane:#121920;--lane-line:#29343F;--edge:#76818D;--veil:rgba(19,26,34,.92);
+    --code:#6D9DFF;--code-fill:#132440;--agent:#F1934C;--agent-fill:#32200F;--human:#9DA6B0;--human-fill:#1B2128;
+    --share:#4BC398;--share-bg:#0E2A20;--ask:#A68FFF;--ask-bg:#211A3E;--offer:#4CBFD5;--offer-bg:#0C2A30;
+    --frame:#A9B6C4;--frame-bg:#1A222B;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0C1117;--surface:#131A22;--ink:#E3E9EF;--ink-2:#B2BDC8;--ink-3:#8793A0;--line:#25303B;
+  --stage:#0F151C;--lane:#121920;--lane-line:#29343F;--edge:#76818D;--veil:rgba(19,26,34,.92);
+  --code:#6D9DFF;--code-fill:#132440;--agent:#F1934C;--agent-fill:#32200F;--human:#9DA6B0;--human-fill:#1B2128;
+  --share:#4BC398;--share-bg:#0E2A20;--ask:#A68FFF;--ask-bg:#211A3E;--offer:#4CBFD5;--offer-bg:#0C2A30;
+  --frame:#A9B6C4;--frame-bg:#1A222B;color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+:root:not([data-lang="en"]) .en{display:none}
+:root[data-lang="en"] .zh{display:none}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--code);outline-offset:2px}
+
+.app{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr);gap:12px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 16px}
+
+/* header */
+.top{display:flex;align-items:center;gap:10px 20px;flex-wrap:wrap;min-width:0}
+.brand{display:flex;align-items:baseline;gap:4px 12px;flex-wrap:wrap;min-width:0}
+.brand h1{font-family:var(--f-display);font-weight:600;font-size:22px;line-height:1.2;letter-spacing:-.01em;margin:0;text-wrap:balance}
+.brand .meta{margin:0;font-family:var(--f-mono);font-size:12px;color:var(--ink-3);letter-spacing:.02em}
+.chips{position:relative;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-left:auto;max-width:100%;padding:2px}
+.chips::-webkit-scrollbar{display:none}
+.nav-chip{flex:none;font-family:var(--f-mono);font-size:13px;line-height:1;padding:8px 11px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);cursor:pointer}
+.nav-chip:hover{border-color:var(--ink-3);color:var(--ink)}
+.nav-chip[aria-current="step"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.seg{display:inline-flex;flex:none;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:none;padding:7px 11px;font-size:13px;line-height:1.2;cursor:pointer;color:var(--ink-3)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+/* stage + panel */
+.main{min-height:0;min-width:0;display:grid;gap:12px}
+.main.side{grid-template-columns:minmax(0,1.35fr) minmax(340px,1fr)}
+.main.stack{grid-template-rows:minmax(0,1fr) auto}
+.stage{position:relative;min-height:0;min-width:0;background:var(--stage);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+#dg{display:block;width:100%;height:100%}
+.panel{min-height:0;min-width:0;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 22px 20px}
+.main.stack .panel{max-height:44vh}
+
+.minimap{position:absolute;top:10px;right:10px;width:112px;height:112px;padding:4px;background:var(--veil);border:1px solid var(--line);border-radius:8px}
+.main.side .minimap{display:none}
+.mm-lane{fill:var(--lane);stroke:var(--lane-line);stroke-width:6}
+.mm-node{opacity:.3}
+.mm-node.k-code,.mm-node.k-kb{fill:var(--code)}
+.mm-node.k-agent{fill:var(--agent)}
+.mm-node.k-human,.mm-node.k-note{fill:var(--human)}
+.mm-node.on{opacity:1}
+.mm-cam{fill:none;stroke:var(--ink);stroke-width:16}
+
+.key{position:absolute;left:10px;bottom:10px;display:flex;gap:12px;margin:0;padding:6px 10px;list-style:none;background:var(--veil);border:1px solid var(--line);border-radius:8px;font-size:12px;color:var(--ink-2)}
+.main.side .key{display:none}
+.key li{display:flex;align-items:center;gap:6px}
+.key i{display:inline-block;width:11px;height:11px;border-radius:3px;border:2px solid}
+.key .kc{border-color:var(--code);background:var(--code-fill)}
+.key .ka{border-color:var(--agent);background:var(--agent-fill)}
+.key .kh{border-color:var(--human);background:var(--human-fill)}
+.stage-nav{position:absolute;right:10px;bottom:10px;display:flex;align-items:center;gap:6px;padding:4px;background:var(--veil);border:1px solid var(--line);border-radius:10px}
+.stage-nav button{width:34px;height:30px;border-radius:7px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:15px;line-height:1}
+.stage-nav button:hover:not(:disabled){border-color:var(--ink-3)}
+.stage-nav button:disabled{opacity:.4;cursor:default}
+.counter{min-width:44px;text-align:center;font-family:var(--f-mono);font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+
+/* diagram */
+#dg text{font-family:var(--f-body)}
+#dg .ttl-d,#dg .ttl-o{fill:var(--ink);font-weight:600}
+#dg .sub{fill:var(--ink-2)}
+#dg .lane-t{font-weight:700}
+#dg .lane-agent .lane-t{fill:var(--agent)}
+#dg .lane-code .lane-t{fill:var(--code)}
+#dg .lane-human .lane-t{fill:var(--human)}
+#dg .lane-s{fill:var(--ink-3)}
+.lane-bg{fill:var(--lane);stroke:var(--lane-line);stroke-width:1;stroke-dasharray:6 4}
+.frame-r{fill:none;stroke:var(--agent);stroke-width:1.5;stroke-dasharray:6 4}
+#dg .frame-t{fill:var(--agent);font-weight:700}
+#dg .frame-s{fill:var(--ink-3)}
+.node .shape{stroke-width:2}
+.k-code .shape{fill:var(--code-fill);stroke:var(--code)}
+.k-kb .shape{fill:var(--stage);stroke:var(--code)}
+.k-agent .shape{fill:var(--agent-fill);stroke:var(--agent)}
+.k-human .shape{fill:var(--human-fill);stroke:var(--human)}
+.k-note .shape{fill:var(--stage);stroke:var(--ink-3)}
+.dashed .shape{stroke-dasharray:5 4}
+.edge polyline{fill:none;stroke:var(--edge);stroke-width:2}
+.edge polygon,.dot{fill:var(--edge)}
+.elabel rect{fill:var(--lane)}
+#dg .lbl{fill:var(--ink-3)}
+#dg [data-s]{transition:opacity .35s ease}
+#dg.focus [data-s]:not(.on){opacity:.14}
+#dg.focus .node.on .shape{stroke-width:3}
+#dg.focus .edge.on polyline{stroke:var(--ink-2)}
+#dg.focus .edge.on polygon,#dg.focus .dot.on{fill:var(--ink-2)}
+#dg.lod-o .ttl-d,#dg.lod-o .sub,#dg.lod-o .elabel,#dg.lod-o .lane-s,#dg.lod-o .frame-s{display:none}
+#dg:not(.lod-o) .ttl-o{display:none}
+#dg.lod-o .lane-t{font-size:30px}
+#dg.lod-o .frame-t{font-size:22px}
+#dg [data-go]{cursor:pointer}
+#dg [data-go]:hover .shape{stroke-width:3}
+
+/* panel content */
+.step-head{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap}
+.badge{font-family:var(--f-mono);font-size:15px;line-height:1;padding:7px 10px;border-radius:8px;background:var(--ink);color:var(--bg)}
+.step-head h2{font-family:var(--f-display);font-weight:600;font-size:23px;line-height:1.25;letter-spacing:-.01em;margin:0;text-wrap:balance}
+.lanes{display:flex;gap:6px}
+.lane-chip{font-size:12px;line-height:1;padding:5px 8px;border-radius:999px;border:1px solid}
+.lc-code{color:var(--code);border-color:var(--code);background:var(--code-fill)}
+.lc-agent{color:var(--agent);border-color:var(--agent);background:var(--agent-fill)}
+.lc-human{color:var(--human);border-color:var(--human);background:var(--human-fill)}
+.cmt{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;line-height:1.2;padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);cursor:pointer}
+.cmt:hover{color:var(--ink);border-color:var(--ink-3)}
+ul.we{list-style:none;margin:16px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 40px;font-size:16px}
+ul.we li{position:relative;padding-left:18px}
+ul.we li::before{content:"";position:absolute;left:2px;top:.6em;width:7px;height:7px;border-radius:2px;background:var(--ink-3)}
+
+.lead{font-size:17px;line-height:1.6;margin:14px 0 0;max-width:62ch}
+.legend-list{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:10px}
+.legend-list li{display:grid;grid-template-columns:14px minmax(0,1fr);gap:10px;align-items:start}
+.legend-list p{margin:0}
+.legend-list b{margin-right:8px;font-weight:600}
+.sw{width:14px;height:14px;margin-top:4px;border-radius:4px;border:2px solid}
+.sw-code{border-color:var(--code);background:var(--code-fill)}
+.sw-agent{border-color:var(--agent);background:var(--agent-fill)}
+.sw-human{border-color:var(--human);background:var(--human-fill)}
+.hint{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;margin:18px 0 0;font-size:13px;color:var(--ink-3)}
+.start{padding:8px 14px;border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);cursor:pointer;font-size:14px}
+
+@media (max-width: 999px){
+  html,body{height:auto}
+  .app{height:auto;display:block}
+  .top{margin-bottom:12px}
+  .chips{order:3;width:100%;margin-left:0}
+  .main,.main.side,.main.stack{display:flex;flex-direction:column;gap:12px}
+  .stage{position:sticky;top:env(safe-area-inset-top,0px);z-index:2;flex:none;height:min(46vh,520px)}
+  .main.stack .panel,.main.side .panel{max-height:none;overflow:visible}
+  ul.we{grid-template-columns:minmax(0,1fr)}
+  .minimap{display:none}
+}
+@media (max-width: 520px){
+  .brand h1{font-size:19px}
+  .step-head h2{font-size:20px}
+  .lead{font-size:16px}
+  .key{display:none}
+  .panel{padding:16px}
+}
+@media (prefers-reduced-motion: reduce){#dg [data-s]{transition:none}}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <h1><span class="zh">校准与评估主线</span><span class="en">Calibration &amp; Evaluation Loop</span></h1>
+      <p class="meta"><span class="zh">Newton 会议 · 2026-10-28</span><span class="en">Newton sync · 2026-10-28</span></p>
+    </div>
+    <nav class="chips" aria-label="步骤 / Steps"><button type="button" class="nav-chip" data-go-step="0"><span class="zh">概览</span><span class="en">Overview</span></button><button type="button" class="nav-chip" data-go-step="1"><span class="zh">①②</span><span class="en">①②</span></button><button type="button" class="nav-chip" data-go-step="2"><span class="zh">③</span><span class="en">③</span></button><button type="button" class="nav-chip" data-go-step="3"><span class="zh">④</span><span class="en">④</span></button><button type="button" class="nav-chip" data-go-step="4"><span class="zh">⑤⑥</span><span class="en">⑤⑥</span></button><button type="button" class="nav-chip" data-go-step="5"><span class="zh">⑦</span><span class="en">⑦</span></button><button type="button" class="nav-chip" data-go-step="6"><span class="zh">⑧⑨</span><span class="en">⑧⑨</span></button></nav>
+    <div class="seg" role="group" aria-label="语言 / Language">
+      <button type="button" data-lang-btn="zh" aria-pressed="true">中文</button>
+      <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
+    </div>
+  </header>
+  <main class="main side" id="main">
+    <div class="stage" id="stage" data-comment-target>
+      <svg id="dg" class="lod-o" viewBox="20 84 1430 1436" preserveAspectRatio="xMidYMid meet" role="img" aria-label="校准与评估主线泳道图 / Calibration loop swimlane">
+<g class="lane lane-agent"><rect class="lane-bg" x="30" y="90" width="400" height="1420" rx="12"/><g class="zh"><text x="230.0" y="118.0" class="lane-t" font-size="18" text-anchor="middle" dominant-baseline="central">Agent 判断</text><text x="230.0" y="142.0" class="lane-s" font-size="12" text-anchor="middle" dominant-baseline="central">多个 Agent 各管一类判断，彼此经代码交接</text></g><g class="en"><text x="230.0" y="118.0" class="lane-t" font-size="18" text-anchor="middle" dominant-baseline="central">Agents decide</text><text x="230.0" y="142.0" class="lane-s" font-size="12" text-anchor="middle" dominant-baseline="central">Each owns one judgment; hand-offs go through code</text></g></g>
+<g class="lane lane-code"><rect class="lane-bg" x="450" y="90" width="660" height="1420" rx="12"/><g class="zh"><text x="780.0" y="118.0" class="lane-t" font-size="18" text-anchor="middle" dominant-baseline="central">代码（harness）</text><text x="780.0" y="142.0" class="lane-s" font-size="12" text-anchor="middle" dominant-baseline="central">计算与守规则，Agent 绕不过</text></g><g class="en"><text x="780.0" y="118.0" class="lane-t" font-size="18" text-anchor="middle" dominant-baseline="central">Code (harness)</text><text x="780.0" y="142.0" class="lane-s" font-size="12" text-anchor="middle" dominant-baseline="central">Computes and enforces rules; agents can’t bypass it</text></g></g>
+<g class="lane lane-human"><rect class="lane-bg" x="1130" y="90" width="310" height="1420" rx="12"/><g class="zh"><text x="1285.0" y="118.0" class="lane-t" font-size="18" text-anchor="middle" dominant-baseline="central">人</text><text x="1285.0" y="142.0" class="lane-s" font-size="12" text-anchor="middle" dominant-baseline="central">只在采集与设定时出现</text></g><g class="en"><text x="1285.0" y="118.0" class="lane-t" font-size="18" text-anchor="middle" dominant-baseline="central">People</text><text x="1285.0" y="142.0" class="lane-s" font-size="12" text-anchor="middle" dominant-baseline="central">Only for collection and settings</text></g></g>
+<g class="frame" data-s="2 3 4"><rect class="frame-r" x="42" y="392" width="376" height="624" rx="10"/><g class="zh"><text x="56.0" y="412.0" class="frame-t" font-size="14" text-anchor="start" dominant-baseline="central">Solver Agent</text><text x="56.0" y="432.0" class="frame-s" font-size="12" text-anchor="start" dominant-baseline="central">同一会话完成：初估 → 调参 → 解释残差</text></g><g class="en"><text x="56.0" y="412.0" class="frame-t" font-size="14" text-anchor="start" dominant-baseline="central">Solver Agent</text><text x="56.0" y="432.0" class="frame-s" font-size="12" text-anchor="start" dominant-baseline="central">One session: estimate → tune → explain residuals</text></g></g>
+<g class="node k-note dashed" data-s="x" data-go="3"><rect class="shape" x="60.0" y="190.0" width="340" height="64" rx="8"/><g class="zh"><text x="230.0" y="212.6" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">Agent 只看训练数据与证据摘要</text><text x="230.0" y="232.9" class="sub" font-size="13" text-anchor="middle" dominant-baseline="central">每个动作都要先过代码校验</text><text x="230.0" y="222.0" class="ttl-o" font-size="21" text-anchor="middle" dominant-baseline="central">Agent 只看训练数据</text></g><g class="en"><text x="230.0" y="213.3" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">Agents see training data only</text><text x="230.0" y="232.9" class="sub" font-size="12" text-anchor="middle" dominant-baseline="central">Every action passes a code check first</text><text x="230.0" y="222.0" class="ttl-o" font-size="20" text-anchor="middle" dominant-baseline="central">Agents: training data only</text></g></g>
+<g class="node k-code" data-s="1" data-go="1"><rect class="shape" x="680.0" y="190.0" width="340" height="64" rx="8"/><g class="zh"><text x="850.0" y="212.6" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">① 数据门</text><text x="850.0" y="232.9" class="sub" font-size="13" text-anchor="middle" dominant-baseline="central">逐试次质检，不合格剔除并记录原因</text><text x="850.0" y="222.0" class="ttl-o" font-size="21" text-anchor="middle" dominant-baseline="central">① 数据门</text></g><g class="en"><text x="850.0" y="213.3" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">① Data gate</text><text x="850.0" y="232.9" class="sub" font-size="12" text-anchor="middle" dominant-baseline="central">Per-trial QC; rejects logged with a reason</text><text x="850.0" y="222.0" class="ttl-o" font-size="20" text-anchor="middle" dominant-baseline="central">① Data gate</text></g></g>
+<g class="node k-code" data-s="1" data-go="1"><rect class="shape" x="680.0" y="290.0" width="340" height="64" rx="8"/><g class="zh"><text x="850.0" y="312.6" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">② 测量</text><text x="850.0" y="332.9" class="sub" font-size="13" text-anchor="middle" dominant-baseline="central">噪声分层、行为关键量（仿真与真实同一套函数）</text><text x="850.0" y="322.0" class="ttl-o" font-size="21" text-anchor="middle" dominant-baseline="central">② 测量</text></g><g class="en"><text x="850.0" y="313.3" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">② Measurement</text><text x="850.0" y="332.9" class="sub" font-size="12" text-anchor="middle" dominant-baseline="central">Noise layers; sim and real share key-quantity code</text><text x="850.0" y="322.0" class="ttl-o" font-size="20" text-anchor="middle" dominant-baseline="central">② Measurement</text></g></g>
+<g class="node k-agent" data-s="1" data-go="1"><rect class="shape" x="60.0" y="290.0" width="340" height="64" rx="8"/><g class="zh"><text x="230.0" y="312.6" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">定义 Agent：起草关键量</text><text x="230.0" y="332.9" class="sub" font-size="13" text-anchor="middle" dominant-baseline="central">新行为的关键量、参数换算；过准入测试才启用</text><text x="230.0" y="322.0" class="ttl-o" font-size="21" text-anchor="middle" dominant-baseline="central">定义 Agent</text></g><g class="en"><text x="230.0" y="313.3" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">Definition agent: key quantities</text><text x="230.0" y="332.9" class="sub" font-size="12" text-anchor="middle" dominant-baseline="central">New behaviors only; enabled after admission tests</text><text x="230.0" y="322.0" class="ttl-o" font-size="20" text-anchor="middle" dominant-baseline="central">Definition agent</text></g></g>
+<g class="node k-agent" data-s="2" data-go="2"><rect class="shape" x="60.0" y="448.0" width="340" height="84" rx="8"/><g class="zh"><text x="230.0" y="471.1" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">③ 参数初估（RAG 检索）</text><text x="230.0" y="491.4" class="sub" font-size="13" text-anchor="middle" dominant-baseline="central">查知识库、材质库与文献，库外材质做类比</text><text x="230.0" y="510.3" class="sub" font-size="13" text-anchor="middle" dominant-baseline="central">给出中心值与范围，标注来源与出处</text><text x="230.0" y="490.0" class="ttl-o" font-size="21" text-anchor="middle" dominant-baseline="central">③ 参数初估</text></g><g class="en"><text x="230.0" y="472.6" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">③ Initial estimate (RAG search)</text><text x="230.0" y="492.2" class="sub" font-size="12" text-anchor="middle" dominant-baseline="central">Knowledge base, material library, literature</text><text x="230.0" y="509.6" class="sub" font-size="12" text-anchor="middle" dominant-baseline="central">Center + range with sources; analogy if unlisted</text><text x="230.0" y="490.0" class="ttl-o" font-size="20" text-anchor="middle" dominant-baseline="central">③ Initial estimate</text></g></g>
+<g class="node k-kb dashed" data-s="2 6" data-go="2"><rect class="shape" x="470.0" y="458.0" width="190" height="64" rx="8"/><g class="zh"><text x="565.0" y="480.6" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">知识库</text><text x="565.0" y="500.9" class="sub" font-size="13" text-anchor="middle" dominant-baseline="central">由 ⑨ 写入，命中先复核</text><text x="565.0" y="490.0" class="ttl-o" font-size="21" text-anchor="middle" dominant-baseline="central">知识库</text></g><g class="en"><text x="565.0" y="481.3" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">Knowledge base</text><text x="565.0" y="500.9" class="sub" font-size="12" text-anchor="middle" dominant-baseline="central">Fed by ⑨, re-checked on hit</text><text x="565.0" y="490.0" class="ttl-o" font-size="20" text-anchor="middle" dominant-baseline="central">Knowledge base</text></g></g>
+<g class="node k-agent" data-s="3" data-go="3"><rect class="shape" x="60.0" y="598.0" width="340" height="84" rx="8"/><g class="zh"><text x="230.0" y="621.1" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">调参策略</text><text x="230.0" y="641.4" class="sub" font-size="13" text-anchor="middle" dominant-baseline="central">选参数与步长，决定何时停止</text><text x="230.0" y="660.3" class="sub" font-size="13" text-anchor="middle" dominant-baseline="central">每步附可检验的预测</text><text x="230.0" y="640.0" class="ttl-o" font-size="21" text-anchor="middle" dominant-baseline="central">调参策略</text></g><g class="en"><text x="230.0" y="622.6" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">Tuning strategy</text><text x="230.0" y="642.2" class="sub" font-size="12" text-anchor="middle" dominant-baseline="central">Picks parameters and steps; decides when to stop</text><text x="230.0" y="659.6" class="sub" font-size="12" text-anchor="middle" dominant-baseline="central">Each step carries a checkable prediction</text><text x="230.0" y="640.0" class="ttl-o" font-size="20" text-anchor="middle" dominant-baseline="central">Tuning strategy</text></g></g>
+<g class="node k-code" data-s="3" data-go="3"><rect class="shape" x="680.0" y="598.0" width="340" height="84" rx="8"/><g class="zh"><text x="850.0" y="621.1" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">④ 精细调整（Newton 调参循环）</text><text x="850.0" y="641.4" class="sub" font-size="13" text-anchor="middle" dominant-baseline="central">在初估范围内仿真、计分，只用训练试次</text><text x="850.0" y="660.3" class="sub" font-size="13" text-anchor="middle" dominant-baseline="central">校验动作、核对预测；知识库命中时只验证</text><text x="850.0" y="640.0" class="ttl-o" font-size="21" text-anchor="middle" dominant-baseline="central">④ 精细调整（Newton）</text></g><g class="en"><text x="850.0" y="622.6" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">④ Fine-tuning (Newton loop)</text><text x="850.0" y="642.2" class="sub" font-size="12" text-anchor="middle" dominant-baseline="central">Simulate and score in range, training trials only</text><text x="850.0" y="659.6" class="sub" font-size="12" text-anchor="middle" dominant-baseline="central">Checks actions and predictions</text><text x="850.0" y="640.0" class="ttl-o" font-size="20" text-anchor="middle" dominant-baseline="central">④ Fine-tuning in Newton</text></g></g>
+<g class="node k-code" data-s="4" data-go="4"><polygon class="shape" points="850,750.0 1000.0,800 850,850.0 700.0,800"/><g class="zh"><text x="850.0" y="790.6" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">⑤ 效果诊断</text><text x="850.0" y="810.9" class="sub" font-size="13" text-anchor="middle" dominant-baseline="central">留出试次上偏差是否低于阈值</text><text x="850.0" y="800.0" class="ttl-o" font-size="21" text-anchor="middle" dominant-baseline="central">⑤ 效果诊断</text></g><g class="en"><text x="850.0" y="791.3" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">⑤ Result check</text><text x="850.0" y="810.9" class="sub" font-size="12" text-anchor="middle" dominant-baseline="central">Held-out bias under threshold?</text><text x="850.0" y="800.0" class="ttl-o" font-size="20" text-anchor="middle" dominant-baseline="central">⑤ Result check</text></g></g>
+<g class="node k-code" data-s="4" data-go="4"><polygon class="shape" points="850,905.0 1010.0,960 850,1015.0 690.0,960"/><g class="zh"><text x="850.0" y="950.6" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">⑥ 原因诊断</text><text x="850.0" y="970.9" class="sub" font-size="13" text-anchor="middle" dominant-baseline="central">看收敛、残差与可辨识性</text><text x="850.0" y="960.0" class="ttl-o" font-size="21" text-anchor="middle" dominant-baseline="central">⑥ 原因诊断</text></g><g class="en"><text x="850.0" y="951.3" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">⑥ Root cause</text><text x="850.0" y="970.9" class="sub" font-size="12" text-anchor="middle" dominant-baseline="central">Converged? Residuals? Identifiable?</text><text x="850.0" y="960.0" class="ttl-o" font-size="20" text-anchor="middle" dominant-baseline="central">⑥ Root cause</text></g></g>
+<g class="node k-agent" data-s="4" data-go="4"><rect class="shape" x="60.0" y="918.0" width="340" height="84" rx="8"/><g class="zh"><text x="230.0" y="941.1" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">解释残差</text><text x="230.0" y="961.4" class="sub" font-size="13" text-anchor="middle" dominant-baseline="central">区分观测映射问题与模型缺口</text><text x="230.0" y="980.3" class="sub" font-size="13" text-anchor="middle" dominant-baseline="central">审查 Agent 复核，分歧走判别实验</text><text x="230.0" y="960.0" class="ttl-o" font-size="21" text-anchor="middle" dominant-baseline="central">解释残差</text></g><g class="en"><text x="230.0" y="942.6" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">Explain residuals</text><text x="230.0" y="962.2" class="sub" font-size="12" text-anchor="middle" dominant-baseline="central">Observation-mapping issue or model gap?</text><text x="230.0" y="979.6" class="sub" font-size="12" text-anchor="middle" dominant-baseline="central">Reviewer agent double-checks; disputes get a test</text><text x="230.0" y="960.0" class="ttl-o" font-size="20" text-anchor="middle" dominant-baseline="central">Explain residuals</text></g></g>
+<g class="node k-code" data-s="5" data-go="5"><rect class="shape" x="680.0" y="1078.0" width="340" height="64" rx="8"/><g class="zh"><text x="850.0" y="1100.6" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">⑦ 采集分诊</text><text x="850.0" y="1120.9" class="sub" font-size="13" text-anchor="middle" dominant-baseline="central">初估范围代入仿真，看关键量变化是否超过精度</text><text x="850.0" y="1110.0" class="ttl-o" font-size="21" text-anchor="middle" dominant-baseline="central">⑦ 采集分诊</text></g><g class="en"><text x="850.0" y="1101.3" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">⑦ Collection triage</text><text x="850.0" y="1120.9" class="sub" font-size="12" text-anchor="middle" dominant-baseline="central">Does the range move key quantities past precision?</text><text x="850.0" y="1110.0" class="ttl-o" font-size="20" text-anchor="middle" dominant-baseline="central">⑦ Collection triage</text></g></g>
+<g class="node k-agent" data-s="5" data-go="5"><rect class="shape" x="60.0" y="1078.0" width="340" height="64" rx="8"/><g class="zh"><text x="230.0" y="1100.6" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">采集规划 Agent：起草任务卡</text><text x="230.0" y="1120.9" class="sub" font-size="13" text-anchor="middle" dominant-baseline="central">标准实验、执行方式、物料清单</text><text x="230.0" y="1110.0" class="ttl-o" font-size="21" text-anchor="middle" dominant-baseline="central">采集规划 Agent</text></g><g class="en"><text x="230.0" y="1101.3" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">Collection agent: drafts task cards</text><text x="230.0" y="1120.9" class="sub" font-size="12" text-anchor="middle" dominant-baseline="central">Standard test, execution method, materials</text><text x="230.0" y="1110.0" class="ttl-o" font-size="20" text-anchor="middle" dominant-baseline="central">Collection agent</text></g></g>
+<g class="node k-code" data-s="6" data-go="6"><rect class="shape" x="680.0" y="1193.0" width="340" height="84" rx="8"/><g class="zh"><text x="850.0" y="1216.2" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">⑧ 结论判定（记录判定路径）</text><text x="850.0" y="1236.5" class="sub" font-size="13" text-anchor="middle" dominant-baseline="central">已校准 · 对任务无影响 · 需采集</text><text x="850.0" y="1255.3" class="sub" font-size="13" text-anchor="middle" dominant-baseline="central">仿真能力缺口 · 感知失败 · 未定</text><text x="850.0" y="1235.0" class="ttl-o" font-size="21" text-anchor="middle" dominant-baseline="central">⑧ 结论判定</text></g><g class="en"><text x="850.0" y="1217.6" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">⑧ Verdict (decision path logged)</text><text x="850.0" y="1237.2" class="sub" font-size="12" text-anchor="middle" dominant-baseline="central">Calibrated · No task effect · Needs data</text><text x="850.0" y="1254.6" class="sub" font-size="12" text-anchor="middle" dominant-baseline="central">Capability gap · Perception failure · Undetermined</text><text x="850.0" y="1235.0" class="ttl-o" font-size="20" text-anchor="middle" dominant-baseline="central">⑧ Verdict</text></g></g>
+<g class="node k-code" data-s="6" data-go="6"><rect class="shape" x="680.0" y="1313.0" width="340" height="64" rx="8"/><g class="zh"><text x="850.0" y="1335.6" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">⑨ 自动准入，写入知识库</text><text x="850.0" y="1355.9" class="sub" font-size="13" text-anchor="middle" dominant-baseline="central">每次命中先复核，失败自动降级</text><text x="850.0" y="1345.0" class="ttl-o" font-size="21" text-anchor="middle" dominant-baseline="central">⑨ 准入，写入知识库</text></g><g class="en"><text x="850.0" y="1336.3" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">⑨ Auto-admit to knowledge base</text><text x="850.0" y="1355.9" class="sub" font-size="12" text-anchor="middle" dominant-baseline="central">Re-checked on every hit; demoted on failure</text><text x="850.0" y="1345.0" class="ttl-o" font-size="20" text-anchor="middle" dominant-baseline="central">⑨ Admit to knowledge base</text></g></g>
+<g class="node k-code" data-s="5" data-go="5"><rect class="shape" x="680.0" y="1418.0" width="340" height="64" rx="8"/><g class="zh"><text x="850.0" y="1440.6" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">预算上限内自动派发</text><text x="850.0" y="1460.9" class="sub" font-size="13" text-anchor="middle" dominant-baseline="central">按价值排序，合并去重</text><text x="850.0" y="1450.0" class="ttl-o" font-size="21" text-anchor="middle" dominant-baseline="central">预算内自动派发</text></g><g class="en"><text x="850.0" y="1441.3" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">Auto-dispatch within budget</text><text x="850.0" y="1460.9" class="sub" font-size="12" text-anchor="middle" dominant-baseline="central">Ranked by value, merged, deduplicated</text><text x="850.0" y="1450.0" class="ttl-o" font-size="20" text-anchor="middle" dominant-baseline="central">Auto-dispatch in budget</text></g></g>
+<g class="node k-note dashed" data-s="5" data-go="5"><rect class="shape" x="1155.0" y="295.0" width="260" height="130" rx="8"/><g class="zh"><text x="1285.0" y="318.4" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">人还负责（不阻塞流程）</text><text x="1175.0" y="340.8" class="sub" font-size="13" text-anchor="start" dominant-baseline="central">· 设定预算上限与默认策略</text><text x="1175.0" y="361.6" class="sub" font-size="13" text-anchor="start" dominant-baseline="central">· 维护标准答案集</text><text x="1175.0" y="382.4" class="sub" font-size="13" text-anchor="start" dominant-baseline="central">· 修改门槛走代码评审</text><text x="1175.0" y="403.2" class="sub" font-size="13" text-anchor="start" dominant-baseline="central">· 异步抽查结论</text><text x="1285.0" y="360.0" class="ttl-o" font-size="21" text-anchor="middle" dominant-baseline="central">人还负责</text></g><g class="en"><text x="1285.0" y="321.6" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">People also (non-blocking)</text><text x="1175.0" y="343.2" class="sub" font-size="12" text-anchor="start" dominant-baseline="central">· Set budget caps, defaults</text><text x="1175.0" y="362.4" class="sub" font-size="12" text-anchor="start" dominant-baseline="central">· Maintain the gold-answer set</text><text x="1175.0" y="381.6" class="sub" font-size="12" text-anchor="start" dominant-baseline="central">· Change gates via code review</text><text x="1175.0" y="400.8" class="sub" font-size="12" text-anchor="start" dominant-baseline="central">· Spot-check verdicts async</text><text x="1285.0" y="360.0" class="ttl-o" font-size="20" text-anchor="middle" dominant-baseline="central">People also handle</text></g></g>
+<g class="node k-human" data-s="5" data-go="5"><rect class="shape" x="1155.0" y="1418.0" width="260" height="64" rx="8"/><g class="zh"><text x="1285.0" y="1440.6" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">执行采集</text><text x="1285.0" y="1460.9" class="sub" font-size="13" text-anchor="middle" dominant-baseline="central">机械臂优先，人做机械臂做不了的</text><text x="1285.0" y="1450.0" class="ttl-o" font-size="21" text-anchor="middle" dominant-baseline="central">执行采集</text></g><g class="en"><text x="1285.0" y="1441.3" class="ttl-d" font-size="15" text-anchor="middle" dominant-baseline="central">Run collection</text><text x="1285.0" y="1460.9" class="sub" font-size="12" text-anchor="middle" dominant-baseline="central">Robot arm first; people do the rest</text><text x="1285.0" y="1450.0" class="ttl-o" font-size="20" text-anchor="middle" dominant-baseline="central">Run collection</text></g></g>
+<g class="edge" data-s="1"><polyline points="850,254.0 850,290.0"/><polygon points="850,290.0 845,280.0 855,280.0"/></g>
+<g class="edge" data-s="1"><polyline points="400.0,322 680.0,322"/><polygon points="680.0,322 670.0,327 670.0,317"/></g>
+<g class="edge" data-s="1 2"><polyline points="850,354.0 850,380 380,380 380,448.0"/><polygon points="380,448.0 375,438.0 385,438.0"/></g>
+<g class="edge" data-s="2"><polyline points="470.0,490 400.0,490"/><polygon points="400.0,490 410.0,485 410.0,495"/></g>
+<g class="edge" data-s="2 3"><polyline points="230,532.0 230,562 850,562 850,598.0"/><polygon points="850,598.0 845,588.0 855,588.0"/></g>
+<g class="elabel" data-s="2 3"><g class="zh"><rect x="567.0" y="552" width="166.0" height="20" rx="4"/><text x="650.0" y="562.0" class="lbl" font-size="12" text-anchor="middle" dominant-baseline="central">初估范围（代码校验后生效）</text></g><g class="en"><rect x="529.8" y="552" width="240.4" height="20" rx="4"/><text x="650.0" y="562.0" class="lbl" font-size="12" text-anchor="middle" dominant-baseline="central">Initial range (after code check)</text></g></g>
+<g class="edge" data-s="3"><polyline points="400.0,625 680.0,625"/><polygon points="680.0,625 670.0,630 670.0,620"/></g>
+<g class="elabel" data-s="3"><g class="zh"><rect x="493.0" y="603" width="94.0" height="20" rx="4"/><text x="540.0" y="613.0" class="lbl" font-size="12" text-anchor="middle" dominant-baseline="central">候选参数与预测</text></g><g class="en"><rect x="448.6" y="603" width="182.8" height="20" rx="4"/><text x="540.0" y="613.0" class="lbl" font-size="12" text-anchor="middle" dominant-baseline="central">Candidates + predictions</text></g></g>
+<g class="edge" data-s="3"><polyline points="680.0,655 400.0,655"/><polygon points="400.0,655 410.0,650 410.0,660"/></g>
+<g class="elabel" data-s="3"><g class="zh"><rect x="475.0" y="657" width="130.0" height="20" rx="4"/><text x="540.0" y="667.0" class="lbl" font-size="12" text-anchor="middle" dominant-baseline="central">分数、残差、核对结果</text></g><g class="en"><rect x="445.0" y="657" width="190.0" height="20" rx="4"/><text x="540.0" y="667.0" class="lbl" font-size="12" text-anchor="middle" dominant-baseline="central">Scores, residuals, checks</text></g></g>
+<g class="edge" data-s="3 4"><polyline points="850,682.0 850,750.0"/><polygon points="850,750.0 845,740.0 855,740.0"/></g>
+<g class="elabel" data-s="3 4"><g class="zh"><rect x="858.0" y="706.0" width="94.0" height="20" rx="4"/><text x="863.0" y="716.0" class="lbl" font-size="12" text-anchor="start" dominant-baseline="central">收敛或预算用完</text></g><g class="en"><rect x="858.0" y="706.0" width="197.2" height="20" rx="4"/><text x="863.0" y="716.0" class="lbl" font-size="12" text-anchor="start" dominant-baseline="central">Converged or out of budget</text></g></g>
+<g class="edge" data-s="4"><polyline points="850,850.0 850,905.0"/><polygon points="850,905.0 845,895.0 855,895.0"/></g>
+<g class="elabel" data-s="4"><g class="zh"><rect x="858.0" y="867.5" width="46.0" height="20" rx="4"/><text x="863.0" y="877.5" class="lbl" font-size="12" text-anchor="start" dominant-baseline="central">不通过</text></g><g class="en"><rect x="858.0" y="867.5" width="38.8" height="20" rx="4"/><text x="863.0" y="877.5" class="lbl" font-size="12" text-anchor="start" dominant-baseline="central">Fail</text></g></g>
+<g class="edge" data-s="4 5"><polyline points="850,1015.0 850,1078.0"/><polygon points="850,1078.0 845,1068.0 855,1068.0"/></g>
+<g class="elabel" data-s="4 5"><g class="zh"><rect x="858.0" y="1036.5" width="58.0" height="20" rx="4"/><text x="863.0" y="1046.5" class="lbl" font-size="12" text-anchor="start" dominant-baseline="central">约束不住</text></g><g class="en"><rect x="858.0" y="1036.5" width="118.0" height="20" rx="4"/><text x="863.0" y="1046.5" class="lbl" font-size="12" text-anchor="start" dominant-baseline="central">Not constrained</text></g></g>
+<g class="edge" data-s="6"><polyline points="850,1277.0 850,1313.0"/><polygon points="850,1313.0 845,1303.0 855,1303.0"/></g>
+<g class="edge" data-s="4"><polyline points="690.0,960 400.0,960"/><polygon points="400.0,960 410.0,955 410.0,965"/></g>
+<g class="elabel" data-s="4"><g class="zh"><rect x="516.0" y="938" width="58.0" height="20" rx="4"/><text x="545.0" y="948.0" class="lbl" font-size="12" text-anchor="middle" dominant-baseline="central">参数偏差</text></g><g class="en"><rect x="489.6" y="938" width="110.8" height="20" rx="4"/><text x="545.0" y="948.0" class="lbl" font-size="12" text-anchor="middle" dominant-baseline="central">Parameter bias</text></g></g>
+<g class="edge" data-s="4"><polyline points="230,918.0 230,682.0"/><polygon points="230,682.0 235,692.0 225,692.0"/></g>
+<g class="elabel" data-s="4"><g class="zh"><rect x="238.0" y="790.0" width="154.0" height="20" rx="4"/><text x="243.0" y="800.0" class="lbl" font-size="12" text-anchor="start" dominant-baseline="central">调整范围或参数，重新调参</text></g><g class="en"><rect x="238.0" y="790.0" width="182.8" height="20" rx="4"/><text x="243.0" y="800.0" class="lbl" font-size="12" text-anchor="start" dominant-baseline="central">Re-tune with a new range</text></g></g>
+<g class="edge" data-s="1 6"><polyline points="1020.0,222 1080,222 1080,1235 1020.0,1235"/><polygon points="1020.0,1235 1030.0,1230 1030.0,1240"/></g>
+<g class="edge" data-s="4 6"><polyline points="1000.0,800 1080,800"/></g>
+<circle class="dot" data-s="4 6" cx="1080" cy="800" r="4"/>
+<g class="elabel" data-s="4 6"><g class="zh"><rect x="1023.0" y="778" width="34.0" height="20" rx="4"/><text x="1040.0" y="788.0" class="lbl" font-size="12" text-anchor="middle" dominant-baseline="central">通过</text></g><g class="en"><rect x="1020.6" y="778" width="38.8" height="20" rx="4"/><text x="1040.0" y="788.0" class="lbl" font-size="12" text-anchor="middle" dominant-baseline="central">Pass</text></g></g>
+<g class="edge" data-s="4 6"><polyline points="1010.0,960 1080,960"/></g>
+<circle class="dot" data-s="4 6" cx="1080" cy="960" r="4"/>
+<g class="elabel" data-s="4 6"><g class="zh"><rect x="1016.0" y="938" width="58.0" height="20" rx="4"/><text x="1045.0" y="948.0" class="lbl" font-size="12" text-anchor="middle" dominant-baseline="central">模型缺口</text></g><g class="en"><rect x="1007.6" y="938" width="74.8" height="20" rx="4"/><text x="1045.0" y="948.0" class="lbl" font-size="12" text-anchor="middle" dominant-baseline="central">Model gap</text></g></g>
+<g class="edge" data-s="5 6"><polyline points="1020.0,1110 1080,1110"/></g>
+<circle class="dot" data-s="5 6" cx="1080" cy="1110" r="4"/>
+<g class="elabel" data-s="5 6"><g class="zh"><rect x="1027.0" y="1088" width="46.0" height="20" rx="4"/><text x="1050.0" y="1098.0" class="lbl" font-size="12" text-anchor="middle" dominant-baseline="central">无影响</text></g><g class="en"><rect x="1012.6" y="1088" width="74.8" height="20" rx="4"/><text x="1050.0" y="1098.0" class="lbl" font-size="12" text-anchor="middle" dominant-baseline="central">No effect</text></g></g>
+<g class="elabel" data-s="1 6"><g class="zh"><rect x="1026.0" y="198" width="58.0" height="20" rx="4"/><text x="1031.0" y="208.0" class="lbl" font-size="12" text-anchor="start" dominant-baseline="central">感知失败</text></g><g class="en"><rect x="1026.0" y="198" width="139.6" height="20" rx="4"/><text x="1031.0" y="208.0" class="lbl" font-size="12" text-anchor="start" dominant-baseline="central">Perception failure</text></g></g>
+<g class="edge" data-s="5"><polyline points="680.0,1110 400.0,1110"/><polygon points="400.0,1110 410.0,1105 410.0,1115"/></g>
+<g class="elabel" data-s="5"><g class="zh"><rect x="517.0" y="1088" width="46.0" height="20" rx="4"/><text x="540.0" y="1098.0" class="lbl" font-size="12" text-anchor="middle" dominant-baseline="central">需采集</text></g><g class="en"><rect x="499.0" y="1088" width="82.0" height="20" rx="4"/><text x="540.0" y="1098.0" class="lbl" font-size="12" text-anchor="middle" dominant-baseline="central">Needs data</text></g></g>
+<g class="edge" data-s="5"><polyline points="230,1142.0 230,1450 680.0,1450"/><polygon points="680.0,1450 670.0,1455 670.0,1445"/></g>
+<g class="elabel" data-s="5"><g class="zh"><rect x="537.0" y="1428" width="46.0" height="20" rx="4"/><text x="560.0" y="1438.0" class="lbl" font-size="12" text-anchor="middle" dominant-baseline="central">任务卡</text></g><g class="en"><rect x="522.6" y="1428" width="74.8" height="20" rx="4"/><text x="560.0" y="1438.0" class="lbl" font-size="12" text-anchor="middle" dominant-baseline="central">Task card</text></g></g>
+<g class="edge" data-s="5"><polyline points="1020.0,1450 1155.0,1450"/><polygon points="1155.0,1450 1145.0,1455 1145.0,1445"/></g>
+<g class="edge" data-s="5 1"><polyline points="1415.0,1450 1428,1450 1428,165 850,165 850,190.0"/><polygon points="850,190.0 845,180.0 855,180.0"/></g>
+<g class="elabel" data-s="5 1"><g class="zh"><rect x="1364.0" y="810" width="58.0" height="20" rx="4"/><text x="1417.0" y="820.0" class="lbl" font-size="12" text-anchor="end" dominant-baseline="central">数据回流</text></g><g class="en"><rect x="1304.0" y="810" width="118.0" height="20" rx="4"/><text x="1417.0" y="820.0" class="lbl" font-size="12" text-anchor="end" dominant-baseline="central">Data flows back</text></g></g>
+      </svg>
+      <svg id="mm" class="minimap" viewBox="20 84 1430 1436" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+<rect class="mm-lane" x="30" y="90" width="400" height="1420" rx="14"/>
+<rect class="mm-lane" x="450" y="90" width="660" height="1420" rx="14"/>
+<rect class="mm-lane" x="1130" y="90" width="310" height="1420" rx="14"/>
+<rect class="mm-node k-note" data-s="x" x="60.0" y="190.0" width="340" height="64" rx="10"/>
+<rect class="mm-node k-code" data-s="1" x="680.0" y="190.0" width="340" height="64" rx="10"/>
+<rect class="mm-node k-code" data-s="1" x="680.0" y="290.0" width="340" height="64" rx="10"/>
+<rect class="mm-node k-agent" data-s="1" x="60.0" y="290.0" width="340" height="64" rx="10"/>
+<rect class="mm-node k-agent" data-s="2" x="60.0" y="448.0" width="340" height="84" rx="10"/>
+<rect class="mm-node k-kb" data-s="2 6" x="470.0" y="458.0" width="190" height="64" rx="10"/>
+<rect class="mm-node k-agent" data-s="3" x="60.0" y="598.0" width="340" height="84" rx="10"/>
+<rect class="mm-node k-code" data-s="3" x="680.0" y="598.0" width="340" height="84" rx="10"/>
+<polygon class="mm-node k-code" data-s="4" points="850,750.0 1000.0,800 850,850.0 700.0,800"/>
+<polygon class="mm-node k-code" data-s="4" points="850,905.0 1010.0,960 850,1015.0 690.0,960"/>
+<rect class="mm-node k-agent" data-s="4" x="60.0" y="918.0" width="340" height="84" rx="10"/>
+<rect class="mm-node k-code" data-s="5" x="680.0" y="1078.0" width="340" height="64" rx="10"/>
+<rect class="mm-node k-agent" data-s="5" x="60.0" y="1078.0" width="340" height="64" rx="10"/>
+<rect class="mm-node k-code" data-s="6" x="680.0" y="1193.0" width="340" height="84" rx="10"/>
+<rect class="mm-node k-code" data-s="6" x="680.0" y="1313.0" width="340" height="64" rx="10"/>
+<rect class="mm-node k-code" data-s="5" x="680.0" y="1418.0" width="340" height="64" rx="10"/>
+<rect class="mm-node k-note" data-s="5" x="1155.0" y="295.0" width="260" height="130" rx="10"/>
+<rect class="mm-node k-human" data-s="5" x="1155.0" y="1418.0" width="260" height="64" rx="10"/>
+        <rect id="mmcam" class="mm-cam" x="20" y="84" width="1430" height="1436" rx="10"/>
+      </svg>
+      <ul class="key" aria-hidden="true">
+        <li><i class="kc"></i><span class="zh">代码</span><span class="en">Code</span></li>
+        <li><i class="ka"></i><span class="zh">Agent</span><span class="en">Agents</span></li>
+        <li><i class="kh"></i><span class="zh">人</span><span class="en">People</span></li>
+      </ul>
+      <div class="stage-nav">
+        <button type="button" id="prev" aria-label="上一步 / Back">←</button>
+        <span id="counter" class="counter">1 / 7</span>
+        <button type="button" id="next" aria-label="下一步 / Next">→</button>
+      </div>
+    </div>
+    <section class="panel" id="panel">
+<article class="step overview" id="p0" data-comment-target><header class="step-head"><span class="badge"><span class="zh">概览</span><span class="en">Overview</span></span><h2><span class="zh">每个“材质 × 行为”走一遍这条线</span><span class="en">Every material × behavior runs this loop</span></h2><button type="button" class="cmt" hidden aria-label="评论 / Comment"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="zh">评论这一步</span><span class="en">Comment on this step</span></button></header><p class="lead"><span class="zh">测真实物体，在 Newton 里拟合参数，再用没参与拟合的试次检查。通过的成为 SimReady 参数；怎么调都对不上的，整理成可复现的缺口报告交给 Newton。</span><span class="en">Measure real objects, fit parameters in Newton, then check them against trials the fit never saw. What passes becomes SimReady parameters. What no tuning can fix becomes a reproducible gap report for the Newton team.</span></p><ul class="legend-list"><li><span class="sw sw-code"></span><p><b><span class="zh">代码（harness）</span><span class="en">Code (harness)</span></b><span class="zh">计算并执行规则，Agent 绕不过。</span><span class="en">Computes and enforces the rules; agents can’t get around it.</span></p></li><li><span class="sw sw-agent"></span><p><b><span class="zh">Agent</span><span class="en">Agents</span></b><span class="zh">各管一类判断，彼此经代码交接；看不到留出数据。</span><span class="en">Each owns one kind of judgment and hands off through code. None sees held-out data.</span></p></li><li><span class="sw sw-human"></span><p><b><span class="zh">人</span><span class="en">People</span></b><span class="zh">只做采集，设定预算和门槛。</span><span class="en">Only collect data and set budgets and gates.</span></p></li></ul><p class="hint"><button type="button" class="start" data-go-step="1"><span class="zh">从 ①② 开始</span><span class="en">Start at ①②</span></button><span><span class="zh">← → 键切换步骤，点图上的方块也能跳转</span><span class="en">Use ← → to step through, or click a box in the diagram</span></span></p></article>
+<article class="step" id="p1" data-comment-target hidden><header class="step-head"><span class="badge"><span class="zh">①②</span><span class="en">①②</span></span><h2><span class="zh">数据门、测量</span><span class="en">Data gate and measurement</span></h2><span class="lanes"><span class="lane-chip lc-code"><span class="zh">代码</span><span class="en">Code</span></span><span class="lane-chip lc-agent"><span class="zh">Agent</span><span class="en">Agents</span></span></span><button type="button" class="cmt" hidden aria-label="评论 / Comment"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="zh">评论这一步</span><span class="en">Comment on this step</span></button></header><ul class="we"><li><span class="zh">自己采的动捕数据逐试次质检，不合格的剔除并记录原因。</span><span class="en">Every motion-capture trial we record goes through a quality gate. Rejected trials are logged with the reason.</span></li><li><span class="zh">噪声分三层：静止时的跟踪抖动、同一初始状态下各次之间的差异、总离散。</span><span class="en">Noise is split into three layers: tracking jitter at rest, spread between repeats from the same initial state, and total spread.</span></li><li><span class="zh">仿真和真实用同一套函数算关键量，比如弹跳高度、起滑角、摆动衰减。</span><span class="en">Sim and real data go through the same functions for key quantities such as bounce height, slip-onset angle and swing decay.</span></li><li><span class="zh">新行为的关键量由定义 Agent 起草，过了准入测试才启用。</span><span class="en">For a new behavior, a definition agent drafts the key quantities; they are enabled only after passing admission tests.</span></li></ul></article>
+<article class="step" id="p2" data-comment-target hidden><header class="step-head"><span class="badge"><span class="zh">③</span><span class="en">③</span></span><h2><span class="zh">参数初估</span><span class="en">Initial parameter estimate</span></h2><span class="lanes"><span class="lane-chip lc-agent"><span class="zh">Agent</span><span class="en">Agents</span></span><span class="lane-chip lc-code"><span class="zh">代码</span><span class="en">Code</span></span></span><button type="button" class="cmt" hidden aria-label="评论 / Comment"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="zh">评论这一步</span><span class="en">Comment on this step</span></button></header><ul class="we"><li><span class="zh">Solver Agent 查知识库、材质库和文献，给出每个参数的中心值和范围，标注来源和出处。</span><span class="en">The Solver Agent searches the knowledge base, material library and literature, then proposes a central value and a range for each parameter, with sources.</span></li><li><span class="zh">库里没有的材质做类比。</span><span class="en">Materials that are not in the library are estimated by analogy.</span></li><li><span class="zh">初估范围经代码校验后才生效。</span><span class="en">The range takes effect only after a code check.</span></li><li><span class="zh">同一个 Solver Agent 会话接着负责调参和解释残差。</span><span class="en">The same Solver Agent session goes on to tune the parameters and explain the residuals.</span></li></ul></article>
+<article class="step" id="p3" data-comment-target hidden><header class="step-head"><span class="badge"><span class="zh">④</span><span class="en">④</span></span><h2><span class="zh">精细调整（Newton 调参循环）</span><span class="en">Fine-tuning in the Newton loop</span></h2><span class="lanes"><span class="lane-chip lc-agent"><span class="zh">Agent</span><span class="en">Agents</span></span><span class="lane-chip lc-code"><span class="zh">代码</span><span class="en">Code</span></span></span><button type="button" class="cmt" hidden aria-label="评论 / Comment"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="zh">评论这一步</span><span class="en">Comment on this step</span></button></header><ul class="we"><li><span class="zh">Solver Agent 选候选参数和步长，每一步附一个可检验的预测。</span><span class="en">The Solver Agent picks candidate parameters and step sizes, each with a prediction the code can check.</span></li><li><span class="zh">代码在初估范围内跑 Newton 仿真并打分，只用训练试次；Agent 看不到留出数据。</span><span class="en">Code runs Newton within the initial range and scores the result on training trials only. Agents never see held-out data.</span></li><li><span class="zh">收敛或预算用完就停，进入 ⑤。</span><span class="en">It stops on convergence or when the budget runs out, then moves to ⑤.</span></li></ul></article>
+<article class="step" id="p4" data-comment-target hidden><header class="step-head"><span class="badge"><span class="zh">⑤⑥</span><span class="en">⑤⑥</span></span><h2><span class="zh">效果诊断、原因诊断</span><span class="en">Result and root-cause checks</span></h2><span class="lanes"><span class="lane-chip lc-code"><span class="zh">代码</span><span class="en">Code</span></span><span class="lane-chip lc-agent"><span class="zh">Agent</span><span class="en">Agents</span></span></span><button type="button" class="cmt" hidden aria-label="评论 / Comment"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="zh">评论这一步</span><span class="en">Comment on this step</span></button></header><ul class="we"><li><span class="zh">⑤ 只用留出试次，看偏差是否低于阈值。</span><span class="en">⑤ On held-out trials only, check whether the bias is below the threshold.</span></li><li><span class="zh">仿真误差² = 模型偏差² + σ²。看模型偏差的 90% 置信区间：整段低于阈值算通过，整段高于算不通过，跨在线上算“未定”。</span><span class="en">sim error² = model bias² + σ². We judge the 90% confidence interval of the model bias: entirely below the threshold passes, entirely above fails, and straddling it is undetermined.</span></li><li><span class="zh">⑥ 不通过就看收敛、残差模式和可辨识性：参数偏差回到 ④ 重新调参，模型缺口直接进结论，数据约束不住参数就转到 ⑦。</span><span class="en">⑥ On a fail, look at convergence, residual patterns and identifiability. A parameter bias goes back to ④ for re-tuning, a model gap goes straight to a verdict, and parameters the data can’t constrain go to ⑦.</span></li><li><span class="zh">残差由 Solver Agent 解释，审查 Agent 复核，有分歧时做判别实验。</span><span class="en">The Solver Agent explains residuals, a reviewer agent double-checks, and disagreements are settled by a discriminating experiment.</span></li></ul></article>
+<article class="step" id="p5" data-comment-target hidden><header class="step-head"><span class="badge"><span class="zh">⑦</span><span class="en">⑦</span></span><h2><span class="zh">采集分诊 → 执行采集</span><span class="en">Collection triage → collection</span></h2><span class="lanes"><span class="lane-chip lc-code"><span class="zh">代码</span><span class="en">Code</span></span><span class="lane-chip lc-agent"><span class="zh">Agent</span><span class="en">Agents</span></span><span class="lane-chip lc-human"><span class="zh">人</span><span class="en">People</span></span></span><button type="button" class="cmt" hidden aria-label="评论 / Comment"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="zh">评论这一步</span><span class="en">Comment on this step</span></button></header><ul class="we"><li><span class="zh">⑦ 把初估范围代入仿真：关键量的变化不超过精度，算“对任务无影响”；超过就要补数据。</span><span class="en">⑦ Push the initial range through the simulation. If key quantities move less than the required precision, the parameter has no effect on the task; otherwise we need data.</span></li><li><span class="zh">采集规划 Agent 起草任务卡：标准实验、执行方式、物料清单。</span><span class="en">A collection-planning agent drafts a task card: standard experiment, execution method, materials.</span></li><li><span class="zh">预算上限内按价值排序、合并去重后自动派发；机械臂优先，人只做机械臂做不了的。数据回流到 ①。</span><span class="en">Within the budget cap, cards are ranked by value, merged, deduplicated and dispatched automatically. Robot arms run what they can and people do the rest. Data flows back to ①.</span></li><li><span class="zh">要多重复、多条件：单个条件重复 5 次，σ 的 90% 区间上下限相差约 7.6 倍；3 个条件各 10 次能缩到约 1.7 倍。</span><span class="en">Repeats and conditions both matter: with 5 repeats of one condition the 90% interval for σ spans about 7.6×; 3 conditions × 10 repeats narrow it to about 1.7×.</span></li></ul></article>
+<article class="step" id="p6" data-comment-target hidden><header class="step-head"><span class="badge"><span class="zh">⑧⑨</span><span class="en">⑧⑨</span></span><h2><span class="zh">结论判定、准入</span><span class="en">Verdict and admission</span></h2><span class="lanes"><span class="lane-chip lc-code"><span class="zh">代码</span><span class="en">Code</span></span></span><button type="button" class="cmt" hidden aria-label="评论 / Comment"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="zh">评论这一步</span><span class="en">Comment on this step</span></button></header><ul class="we"><li><span class="zh">⑧ 代码给出结论并记录判定路径：已校准、对任务无影响、需采集、仿真能力缺口、感知失败五种之一，判不出来给“未定”。</span><span class="en">⑧ Code issues one of five verdicts and records how it got there: calibrated, no effect on the task, needs data, simulation capability gap or perception failure. When the evidence can’t decide, the verdict is undetermined.</span></li><li><span class="zh">⑨ 通过的自动准入，写入知识库；下次命中先复核，失败自动降级。</span><span class="en">⑨ Results that pass are admitted automatically and written to the knowledge base. Every later hit is re-checked first and demoted automatically if it fails.</span></li><li><span class="zh">每个“材质 × 行为”出一份结构固定的报告：结论、参数、verification、validation、诊断，有缺口时附缺口报告。</span><span class="en">Each material × behavior gets a report with a fixed structure: verdict, parameters, verification, validation and diagnosis, plus a gap report when there is one.</span></li></ul></article>
+    </section>
+  </main>
+</div>
+
+<script type="application/json" id="meta">{"steps": [{"token": "overview", "cam": [20, 84, 1430, 1436], "layout": "side", "lod": "o"}, {"token": "data", "cam": [40, 150, 1120, 250], "layout": "stack", "lod": "d"}, {"token": "estimate", "cam": [30, 296, 1060, 300], "layout": "stack", "lod": "d"}, {"token": "tune", "cam": [30, 520, 1060, 250], "layout": "stack", "lod": "d"}, {"token": "diagnose", "cam": [30, 690, 1100, 400], "layout": "stack", "lod": "d"}, {"token": "collect", "cam": [30, 1050, 1420, 460], "layout": "stack", "lod": "d"}, {"token": "verdict", "cam": [600, 1050, 620, 350], "layout": "stack", "lod": "d"}]}</script>
+<script>
+(function () {
+  'use strict';
+  var root = document.documentElement;
+  var STEPS = JSON.parse(document.getElementById('meta').textContent).steps;
+  var LAST = STEPS.length - 1;
+  var TOKENS = STEPS.map(function (s) { return s.token; });
+  var dg = document.getElementById('dg');
+  var mmcam = document.getElementById('mmcam');
+  var stage = document.getElementById('stage');
+  var main = document.getElementById('main');
+  var panel = document.getElementById('panel');
+  var bar = document.querySelector('.chips');
+  var panels = [].slice.call(document.querySelectorAll('.step'));
+  var navChips = [].slice.call(document.querySelectorAll('.nav-chip'));
+  var marks = [].slice.call(document.querySelectorAll('#dg [data-s], #mm [data-s]'));
+  var langBtns = [].slice.call(document.querySelectorAll('[data-lang-btn]'));
+  var prevBtn = document.getElementById('prev');
+  var nextBtn = document.getElementById('next');
+  var counter = document.getElementById('counter');
+  var reduce = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+  var cur = 0, vb = STEPS[0].cam.slice(), raf = 0, pending = false, comments = null;
+
+  function save(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+
+  function setLang(l) {
+    root.setAttribute('data-lang', l);
+    root.setAttribute('lang', l === 'en' ? 'en' : 'zh-CN');
+    document.title = l === 'en' ? 'Calibration & Evaluation Loop' : '校准与评估主线';
+    langBtns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-lang-btn') === l)); });
+  }
+
+  // Camera: fit the step's box into the stage, never zooming a detail step past 1.4x.
+  function fit(box) {
+    var r = stage.getBoundingClientRect();
+    var W = Math.max(r.width, 1), H = Math.max(r.height, 1);
+    var s = Math.min(W / box[2], H / box[3]);
+    if (STEPS[cur].lod === 'd' && s > 1.4) s = 1.4;
+    var w = W / s, h = H / s;
+    return [box[0] + box[2] / 2 - w / 2, box[1] + box[3] / 2 - h / 2, w, h];
+  }
+  function draw(v) {
+    dg.setAttribute('viewBox', v.map(function (n) { return n.toFixed(1); }).join(' '));
+    mmcam.setAttribute('x', v[0].toFixed(0));
+    mmcam.setAttribute('y', v[1].toFixed(0));
+    mmcam.setAttribute('width', v[2].toFixed(0));
+    mmcam.setAttribute('height', v[3].toFixed(0));
+  }
+  function moveTo(target, instant) {
+    cancelAnimationFrame(raf);
+    raf = 0;
+    if (instant || reduce.matches) { vb = target; draw(vb); return; }
+    var from = vb.slice(), t0 = 0, D = 650;
+    function tick(t) {
+      if (!t0) t0 = t;
+      var k = Math.min(1, (t - t0) / D);
+      var e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+      vb = from.map(function (f, i) { return f + (target[i] - f) * e; });
+      draw(vb);
+      raf = k < 1 ? requestAnimationFrame(tick) : 0;
+    }
+    raf = requestAnimationFrame(tick);
+  }
+
+  function revealChip(c) {
+    var l = c.offsetLeft, r = l + c.offsetWidth;
+    if (l < bar.scrollLeft) bar.scrollLeft = l - 8;
+    else if (r > bar.scrollLeft + bar.clientWidth) bar.scrollLeft = r - bar.clientWidth + 8;
+  }
+
+  function go(i, instant) {
+    i = Math.max(0, Math.min(LAST, i));
+    cur = i;
+    var m = STEPS[i], key = String(i);
+    main.className = 'main ' + m.layout;
+    dg.classList.toggle('lod-o', m.lod === 'o');
+    dg.classList.toggle('focus', i !== 0);
+    marks.forEach(function (el) { el.classList.toggle('on', el.getAttribute('data-s').split(' ').indexOf(key) >= 0); });
+    panels.forEach(function (p, k) { p.hidden = k !== i; });
+    navChips.forEach(function (c, k) {
+      if (k === i) { c.setAttribute('aria-current', 'step'); revealChip(c); } else c.removeAttribute('aria-current');
+    });
+    counter.textContent = (i + 1) + ' / ' + STEPS.length;
+    prevBtn.disabled = i === 0;
+    nextBtn.disabled = i === LAST;
+    panel.scrollTop = 0;
+    if (window.innerWidth < 1000) {
+      var top = main.getBoundingClientRect().top + window.scrollY - 8;
+      if (window.scrollY > top) window.scrollTo({ top: top, behavior: reduce.matches ? 'auto' : 'smooth' });
+    }
+    pending = true;
+    requestAnimationFrame(function () { pending = false; moveTo(fit(m.cam), instant); });
+  }
+
+  function hideComments() {
+    comments = null;
+    [].forEach.call(document.querySelectorAll('.cmt'), function (b) { b.hidden = true; });
+  }
+  function openComposer(btn) {
+    var target = btn.closest('[data-comment-target]') || btn;
+    comments.openComposer({ element: target }).catch(function (err) {
+      var code = err && err.code;
+      if (['unavailable', 'forbidden', 'not_granted', 'capability_disabled', 'capability_removed'].indexOf(code) >= 0) hideComments();
+    });
+  }
+  function initComments() {
+    if (!window.claude || typeof window.claude.use !== 'function') return;
+    window.claude.use('comments').then(function (c) {
+      if (!c) return;
+      comments = c;
+      [].forEach.call(document.querySelectorAll('.cmt'), function (b) { b.hidden = false; });
+    }, function () {});
+  }
+
+  document.addEventListener('click', function (e) {
+    var el = e.target;
+    if (!el || !el.closest) return;
+    var t = el.closest('[data-go-step]');
+    if (t) { go(+t.getAttribute('data-go-step')); return; }
+    var n = el.closest('#dg [data-go]');
+    if (n) { go(+n.getAttribute('data-go')); return; }
+    var lb = el.closest('[data-lang-btn]');
+    if (lb) { var l = lb.getAttribute('data-lang-btn'); setLang(l); save('calib-loop-lang', l); return; }
+    var cb = el.closest('.cmt');
+    if (cb && comments) openComposer(cb);
+  });
+  prevBtn.addEventListener('click', function () { go(cur - 1); });
+  nextBtn.addEventListener('click', function () { go(cur + 1); });
+  document.addEventListener('keydown', function (e) {
+    if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
+    var tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : '';
+    if (tag === 'input' || tag === 'textarea' || tag === 'select' || (e.target && e.target.isContentEditable)) return;
+    var k = e.key;
+    if (k === 'ArrowRight' || k === 'PageDown') { go(cur + 1); e.preventDefault(); }
+    else if (k === 'ArrowLeft' || k === 'PageUp') { go(cur - 1); e.preventDefault(); }
+    else if (k === 'Home') { go(0); e.preventDefault(); }
+    else if (k === 'End') { go(LAST); e.preventDefault(); }
+    else if (/^[1-7]$/.test(k)) go(+k - 1);
+  });
+  // Link tokens: a step ("tune"), a language ("en") or both ("tune-en").
+  function parseHash() {
+    var out = { step: -1, lang: null };
+    location.hash.slice(1).split('-').forEach(function (p) {
+      if (p === 'en' || p === 'zh') out.lang = p;
+      else if (TOKENS.indexOf(p) >= 0) out.step = TOKENS.indexOf(p);
+    });
+    return out;
+  }
+  window.addEventListener('hashchange', function () {
+    var h = parseHash();
+    if (h.lang) setLang(h.lang);
+    if (h.step >= 0) go(h.step);
+  });
+  function refit() {
+    if (pending) return;
+    var t = fit(STEPS[cur].cam);
+    if (raf) moveTo(t); else { vb = t; draw(vb); }
+  }
+  if (window.ResizeObserver) new ResizeObserver(refit).observe(stage);
+  else window.addEventListener('resize', refit);
+
+  function start(data) {
+    data = data || {};
+    var h = parseHash();
+    var lang = h.lang || ((data.lang === 'en' || data.lang === 'zh') ? data.lang : load('calib-loop-lang'));
+    setLang(lang === 'en' ? 'en' : 'zh');
+    var i = h.step;
+    if (i < 0 && typeof data.step === 'number') i = data.step;
+    go(i < 0 ? 0 : i, true);
+    initComments();
+  }
+  var hot = window.claude && window.claude.hot;
+  if (hot && typeof hot.snapshot === 'function') hot.snapshot(function () { return { step: cur, lang: root.getAttribute('data-lang') }; });
+  if (hot && typeof hot.ready === 'function') hot.ready(start);
+  else start(hot && hot.data ? hot.data : {});
+})();
+</script>
+
+</body></html>

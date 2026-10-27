@@ -8,7 +8,7 @@ The framework uses the `task_tuning` Python package and `task-tuning` CLI. The c
 
 TaskTuning turns measured observations, a simulator adapter and a parameter space into one traceable `Tuning.run()`. It checks numerical accuracy and local identifiability, performs batched search, reloads the candidate, and validates before releasing an asset.
 
-[Local report preview](docs/publishing-results.md) · [User guide](docs/user-guide.md) · [Codex skills](docs/codex-skills.md) · [Cable A → B → C example](examples/cable_calibration/README.md)
+[Framework overview (English)](index.html) · [中文介绍](index_cn.html) · [Calibration examples](examples/index.html) · [Local preview](docs/publishing-results.md) · [User guide](docs/user-guide.md) · [Codex skills](docs/codex-skills.md) · [Cable A → B → C example](examples/cable_calibration/README.md)
 
 ## Quick start
 
