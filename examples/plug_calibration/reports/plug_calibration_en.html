@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="RJ45 plug calibration report: real robot forces, CAE component evidence, coupled insertion-load calibration, and validation scope.">
+<title>Plug calibration — TaskTuning technical report</title>
+<style>
+:root{color-scheme:light;--ink:#172e40;--muted:#536672;--paper:#f7f5ef;--line:#d6dedc;--accent:#087e83}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.65 system-ui,sans-serif}
+main,header,footer{max-width:1120px;margin:auto;padding:0 28px}
+header{display:flex;justify-content:space-between;align-items:center;padding-top:28px;padding-bottom:28px;border-bottom:1px solid var(--line)}
+.brand{font-weight:800;letter-spacing:.08em;font-size:15px}a{color:var(--accent);text-underline-offset:4px}
+header a{font-size:14px}header{gap:16px;flex-wrap:wrap}.hero{padding:64px 0 34px}.eyebrow{font-size:12px;letter-spacing:.13em;font-weight:750;color:var(--accent);text-transform:uppercase}
+h1{font-size:clamp(36px,5vw,62px);line-height:1.08;letter-spacing:-.04em;max-width:850px;margin:18px 0 24px}
+.lead{font-size:19px;max-width:800px;color:var(--muted)}.buttons{display:flex;flex-wrap:wrap;gap:12px;margin:28px 0}
+.button{display:inline-block;border:1px solid var(--accent);border-radius:7px;padding:12px 20px;text-decoration:none;font-weight:650}
+.primary{background:var(--accent);color:white}.button:hover{filter:brightness(.9)}a:focus-visible{outline:3px solid #c48731;outline-offset:5px}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding:26px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.metric strong{display:block;font-size:33px;line-height:1.3}.metric span{font-size:14px;color:var(--muted)}
+figure{margin:38px 0 24px}figure img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:10px}
+figcaption{color:var(--muted);font-size:13px;margin-top:10px}.note{border-left:3px solid #b18455;background:#ede8de;padding:17px 22px;margin:28px 0 40px}
+h2{font-size:27px;letter-spacing:-.02em;margin:0 0 18px}.stages{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.stage{border-top:2px solid var(--accent);padding-top:18px}.stage small{font-weight:750;color:var(--accent)}h3{font-size:20px;margin:8px 0}.stage p{color:var(--muted);font-size:15px}
+.resources{padding:40px 0;display:flex;flex-wrap:wrap;gap:14px 26px}footer{border-top:1px solid var(--line);padding-top:22px;padding-bottom:30px;font-size:13px;color:var(--muted)}
+@media(max-width:680px){main,header,footer{padding-left:20px;padding-right:20px}.hero{padding-top:38px}.metrics{grid-template-columns:1fr;gap:18px}.metric{display:grid;grid-template-columns:125px 1fr;gap:12px;align-items:center}.metric strong{font-size:26px}.stages{grid-template-columns:1fr}.lead{font-size:17px}.button{width:100%;text-align:center}}
+html{scroll-behavior:smooth}section[id]{scroll-margin-top:24px}.chapter{padding:48px 0;border-top:1px solid var(--line)}
+header nav{display:flex;flex-wrap:wrap;gap:10px 20px}.status{display:inline-block;font-size:12px;font-weight:700;background:#e0eeea;color:#235950;padding:4px 9px;border-radius:4px}.pending{background:#eee4d4;color:#765321}
+video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#12232e;border:1px solid var(--line);border-radius:10px}.intro{max-width:850px;color:var(--muted)}
+.table-scroll{overflow-x:auto;margin:24px 0}table{border-collapse:collapse;width:100%;font-size:14px;text-align:left}th,td{padding:13px 14px;border-bottom:1px solid var(--line);vertical-align:top}thead{background:#e9eeea}caption{text-align:left;font-weight:650;margin-bottom:12px}
+.details{border:1px solid var(--line);border-radius:8px;padding:18px 22px;margin:24px 0}summary{cursor:pointer;font-weight:650}summary:focus-visible,video:focus-visible,.table-scroll:focus-visible{outline:3px solid #c48731;outline-offset:4px}.details figure{margin-bottom:0}.details p:last-child{margin-bottom:0}code{overflow-wrap:anywhere}.skip{position:absolute;left:20px;top:-100px;background:var(--paper);padding:12px;z-index:1}.skip:focus{top:10px}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}@media(max-width:680px){.chapter{padding:32px 0}th,td{padding:10px}header nav{gap:10px 16px}.details{padding:14px}.metric{grid-template-columns:115px 1fr}}
+</style></head>
+<body><a class="skip" href="#main">Skip to content</a>
+<header><div class="brand">TASKTUNING / PLUG REPORT</div><nav aria-label="Report navigation"><a href="../../../index.html#plug">← Results homepage</a><a href="#results">Results</a><a href="#method">Method</a><a href="#model">Model</a><a href="#scope">Validation scope</a></nav></header>
+<main id="main">
+<section class="hero"><div class="eyebrow">Real measurements + CAE · 19 October 2026</div>
+<h1>Calibrating RJ45<br>insertion forces.</h1>
+<p class="lead">Five real robot recordings constrain the total force. CAE evidence helps identify the missing component load. This report follows the model comparison, physically coupled calibration and the limits of the current result.</p>
+<div class="buttons"><a class="button primary" href="#results">See the final result →</a><a class="button" href="#method">Follow the calibration method →</a></div></section>
+<section id="results" class="chapter" aria-labelledby="results-title"><div class="eyebrow">01 / Final result</div><h2 id="results-title">Matching the measured insertion forces</h2>
+<figure><a href="../../../assets/task-calibration/plug-final-preview.png"><img src="../../../assets/task-calibration/plug-final-preview.png" width="1920" height="750" loading="lazy" alt="Latest calibrated simulation compared with five real Piper recordings: axial and lateral insertion force on the shared clock."></a><figcaption>Latest physical candidate versus five real robot recordings. Real curves are shown only in their fixed evaluation windows.</figcaption></figure><p class="intro">At the finer 1/19200 s step, the full 9.3-second simulation reaches an axial peak of about 11.12 N. All five development repeats meet the current force, trend and total-force event-time criteria.</p>
+<section class="metrics" aria-label="Latest plug calibration results"><div class="metric"><strong>4.54%</strong><span>Worst axial force NRMSE · ≤10% criterion</span></div><div class="metric"><strong>14.80%</strong><span>Worst lateral force NRMSE · ≤30% criterion</span></div><div class="metric"><strong>5 / 5</strong><span>Development repeats meet observation criteria</span></div></section>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Latest plug acceptance metrics"><table><caption>Worst error across the five real recordings</caption><thead><tr><th scope="col">Observation</th><th scope="col">Latest result</th><th scope="col">Criterion</th></tr></thead><tbody>
+<tr><th scope="row">Axial force peak / NRMSE</th><td>4.12% / 4.54%</td><td>Each ≤10%</td></tr><tr><th scope="row">Lateral force peak / NRMSE</th><td>13.71% / 14.80%</td><td>Each ≤30%</td></tr><tr><th scope="row">Total-force loading event</th><td>4.22% · 0.184 s</td><td>≤10% · 0.436 s</td></tr><tr><th scope="row">Total-force release event</th><td>7.22% · 0.315 s</td><td>≤10% · 0.436 s</td></tr><tr><th scope="row">Loading rise / release fall</th><td>Both satisfied for all five</td><td>Both required</td></tr>
+</tbody></table></div>
+<p class="intro">NRMSE is computed over each active loading window and normalized by its real force peak. Timing errors use the fixed 4.36 s median real loading duration. The percentages do not represent pointwise error bounds.</p>
+
+</section>
+<section id="method" class="chapter" aria-labelledby="method-title"><div class="eyebrow">02 / Calibration method</div><h2 id="method-title">Real forces, explained with CAE evidence</h2>
+<p class="intro">A force sensor measures the combined insertion load. Ansys Motion deformation and contact evidence help distinguish the upper latch from the metal electrical contacts. This distinction exposed a missing load contribution that latch stiffness, damping or friction alone could not reliably absorb.</p>
+<div class="stages">
+<article class="stage"><small>MEASURE</small><h3>Five real robot repeats</h3><p>Piper insertion recordings provide axial and lateral force references. All five repeats are scored separately with fixed comparison windows and a shared simulation clock.</p></article>
+<article class="stage"><small>EXPLAIN</small><h3>Separate the load sources</h3><p>The CAE metal-contact channel has an axial peak of about 5.61 N and excludes the upper latch load. It informs a component of the model; the measured robot total peaks at 11.03–11.59 N.</p></article>
+<article class="stage"><small>CALIBRATE</small><h3>Apply the load in dynamics</h3><p>A two-parameter, insertion-depth-dependent equivalent load is fitted to real force evidence and applied inside Newton / MuJoCo-Warp. Plug motion, latch angle and contact forces respond to it.</p></article>
+</div>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Plug model comparison"><table>
+<caption>What changes when the missing load is included?</caption><thead><tr><th scope="col">Model comparison</th><th scope="col">Worst axial peak error</th><th scope="col">Worst axial NRMSE</th><th scope="col">Evidence</th></tr></thead><tbody>
+<tr><th scope="row">A · Contact-only baseline</th><td>65.32%</td><td>52.76%</td><td>Physical simulation</td></tr>
+<tr><th scope="row">B · Baseline + CAE metal load</th><td>17.03%</td><td>18.93%</td><td>Retrospective offline addition; no amplitude fit</td></tr>
+<tr><th scope="row">C · Real-calibrated equivalent load</th><td>4.18%</td><td>4.39%</td><td>Coupled physical simulation</td></tr>
+</tbody></table></div>
+<p class="intro">A and C use the same 1/9600 s step. B was constructed later to test the missing-load explanation, using a common event-based time mapping. It was not a newly executed training stage leading to C, and its aligned events are not independent timing validation.</p>
+<figure><a href="../../../assets/task-calibration/plug-cae-comparison.png"><img src="../../../assets/task-calibration/plug-cae-comparison.png" loading="lazy" width="1870" height="1870" alt="Five real Piper force curves compared with contact-only dynamics, a retrospective CAE metal-load addition, and the real-calibrated coupled model. Worst axial NRMSE decreases from 52.76% to 18.93% to 4.39%."></a><figcaption>Archived comparison at a shared simulation step. CAE provides a useful loading trend; its unloading behavior differs from the equivalent load. Open the figure for full resolution.</figcaption></figure>
+
+</section>
+<section id="model" class="chapter" aria-labelledby="model-title"><div class="eyebrow">03 / Physical model</div><h2 id="model-title">Equivalent load and latch recovery</h2>
+
+<p>The equivalent load follows <code>F(s) = k × clip(s − s₀, 0, L)</code>, with <code>k = 1383.238695 N/m</code>, <code>s₀ = 2.98159284 mm</code> and fixed <code>L = 10 mm</code>. Depth is read from the actual plug pose at every substep. This is an effective axial model; its residual load cannot be uniquely attributed to metal elasticity.</p>
+<p>In the latest candidate, the release drop comes from changing latch contact while the equivalent load continues to rise. This describes the candidate's internal mechanism, not an independently measured decomposition of the real release.</p>
+<figure><a href="../../../assets/task-calibration/plug-force-validation.png"><img src="../../../assets/task-calibration/plug-force-validation.png" width="2550" height="1350" loading="lazy" alt="Latest axial and lateral force comparisons, contact and equivalent-load decomposition, timestep differences, and latch recovery."></a><figcaption>Archived latest refinement report: stage1_loaded_finer, 19 October 2026.</figcaption></figure>
+
+
+</section>
+<section id="scope" class="chapter" aria-labelledby="scope-title"><div class="eyebrow">04 / Validation &amp; traceability</div><h2 id="scope-title">What the evidence establishes</h2>
+<div class="note"><strong>Observation criteria passed; qualification remains open.</strong> All five Piper repeats were used for development, with no independent holdout. The timestep feature change is 0.028135, above the existing 0.015 budget. Different speeds, withdrawal, pull-out locking and complete wrench behavior remain unvalidated for this candidate. The latest local force model has not been integrated into the full robot replay.</div>
+<p><a href="../../../assets/task-calibration/plug-evidence.json">Download the plug evidence summary and source hashes →</a></p>
+<p class="intro">The full-scene replay and the latest local plug force candidate are separate experiment versions. The replay uses an earlier plug configuration and a cable driven by the plug poses, without cable reaction forces fed back to the rigid-body solver. It demonstrates task reconstruction; junction calibration and complete task validation remain open.</p>
+<div class="buttons"><a class="button" href="../../../index.html#plug">← Back to the results homepage</a><a class="button" href="../../../index.html#demo">Watch the complete task demo →</a></div>
+</section></main><footer>Plug evidence through 19 October 2026 · Newton / MuJoCo-Warp · TaskTuning<br>Five development recordings; numerical qualification and independent validation remain open.</footer>
+</body></html>

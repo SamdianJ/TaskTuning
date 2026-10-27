@@ -19,12 +19,13 @@ GitHub documents this setup in [Configuring a publishing source](https://docs.gi
 ## Public entry points
 
 - [Results homepage](https://samdianj.github.io/TaskTuning/) — cable, plug, junction roadmap, and full demo
-- [Plug results](https://samdianj.github.io/TaskTuning/#plug)
+- [Plug result preview](https://samdianj.github.io/TaskTuning/#plug)
+- [Plug calibration report](https://samdianj.github.io/TaskTuning/examples/plug_calibration/reports/plug_calibration_en.html)
 - [Full task demo](https://samdianj.github.io/TaskTuning/#demo)
 - [English report](https://samdianj.github.io/TaskTuning/examples/cable_calibration/reports/cable_calibration_en.html)
 - [Chinese report](https://samdianj.github.io/TaskTuning/examples/cable_calibration/reports/cable_calibration_zh.html)
 
-The reports retain their existing paths and language switch. Source references link to GitHub so Markdown and JSON evidence remain accessible from the website. Figures/styles are embedded for offline reading; source references need internet access.
+The cable reports retain their existing paths and language switch. Source references link to GitHub so Markdown and JSON evidence remain accessible from the website. Cable figures/styles are embedded for offline reading; source references need internet access. The plug report uses shared figures in `assets/task-calibration/` and links back to the homepage.
 
 ## Update the preview
 
@@ -54,7 +55,7 @@ After pushing, confirm the Pages deployment succeeds and check the homepage, bot
 
 ## Plug results and full demo
 
-The homepage publishes the local RJ45 insertion evidence through 19 October 2026, with project status updated on 27 October. `assets/task-calibration/plug-evidence.json` records the displayed metrics and SHA-256 hashes of the experiment sources. The two PNG figures are copied from the archived CAE comparison and latest timestep-refinement report.
+The homepage shows the final local RJ45 insertion result, with a two-panel force comparison and a link to `examples/plug_calibration/reports/plug_calibration_en.html`. The separate report holds the calibration method, CAE comparison, model parameters and validation details. Evidence is through 19 October 2026, with project status updated on 27 October. `assets/task-calibration/plug-evidence.json` records the displayed metrics and SHA-256 hashes of the experiment sources. The two technical PNG figures are copied from the archived CAE comparison and latest timestep-refinement report. `plug-final-preview.png` shows only the final axial/lateral simulation against the five real recordings; its processing and source hashes are recorded in the evidence summary.
 
 Keep the comparison scopes separate: the CAE intermediate is a retrospective offline addition, while the real-calibrated candidate applies an equivalent force inside the dynamics. The five development recordings pass the stated observation criteria; numerical qualification and independent holdout validation remain open. The latest local force candidate is not the configuration used in the full-scene replay. Junction calibration has not started; real2sim reconstruction is available and sim2real is in progress.
 

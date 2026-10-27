@@ -56,5 +56,25 @@
       "experiment_relative_path": "plug_calibration/piper_force_calibration/baseline_restart/axial_priority_20261019/stage1_loaded_finer_refinement.json",
       "sha256": "6c6306bbc03bbe32ec042e5c95894666972993e4d77a6ce31efdb4d6ab84ec7f"
     }
-  ]
+  ],
+  "final_preview": {
+    "file": "plug-final-preview.png",
+    "case": "stage1_loaded_finer",
+    "processing": "Fourth-order zero-phase 10 Hz filtering on full native XYZ; lateral norm after filtering; sample on reference 100 Hz grid. Real curves restricted to each original channel activity window. No time alignment.",
+    "sha256": "8cabca4165bfd15da0df64c981f51ab902cba2dd1d093e96d3e1f4eb1c18d911",
+    "sources": [
+      {
+        "experiment_relative_path": "plug_calibration/piper_force_calibration/evidence/reference.npz",
+        "sha256": "0203aca54107810277bba542478dd73194388d6942b6f270609901ee60a47e64"
+      },
+      {
+        "experiment_relative_path": "plug_calibration/piper_force_calibration/baseline_restart/axial_priority_20261019/stage1_loaded_finer/force_components.npz",
+        "sha256": "4c7bddb6bab6708c6f625413876c26ad1d3623fe41cee07cc431d252c0f5b608"
+      },
+      {
+        "experiment_relative_path": "plug_calibration/piper_force_calibration/baseline_restart/axial_priority_20261019/acceptance_config.json",
+        "sha256": "8b63900f556305826c9323b30f4be3b0488adb131fe48b05fe535b430c5337c0"
+      }
+    ]
+  }
 }
