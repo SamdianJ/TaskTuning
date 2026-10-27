@@ -1,0 +1,43 @@
+{
+  "source": {
+    "file": "demo/Synopsys Demo_V6.mp4",
+    "bytes": 107058647,
+    "sha256": "ab7745d3d4e73a75c4f4415d8ff6f76623d28e8a36c158d167c86988ab8ec520",
+    "audio_packet_hash": "SHA256=7398541fcc0ccac6ee0837c79ee491635820a5a5bae9fba2e8a32c241f4766a5",
+    "mp4_atoms": [
+      "ftyp",
+      "wide",
+      "mdat",
+      "moov"
+    ],
+    "duration_s": 55.7,
+    "fps": 60.0,
+    "size": [
+      1920,
+      1080
+    ]
+  },
+  "web": {
+    "file": "cable_calibration/task_tuning/assets/task-calibration/synopsys-demo-v6.mp4",
+    "bytes": 12166468,
+    "sha256": "1284799f98c2904b09dc7dc559db3889b24891518e4d0080fbdb23276a329fef",
+    "audio_packet_hash": "SHA256=7398541fcc0ccac6ee0837c79ee491635820a5a5bae9fba2e8a32c241f4766a5",
+    "mp4_atoms": [
+      "ftyp",
+      "moov",
+      "free",
+      "mdat"
+    ],
+    "duration_s": 55.7,
+    "fps": 60.0,
+    "size": [
+      1920,
+      1080
+    ]
+  },
+  "video_encoder": "libx264",
+  "crf": 22,
+  "preset": "medium",
+  "audio": "stream copy",
+  "poster_source_time_s": 10
+}

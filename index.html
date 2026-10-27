@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="TaskTuning: a traceable calibration workflow, demonstrated through real cable measurements, clamp identification, and SLS viscoelasticity.">
-<title>TaskTuning — Cable calibration results</title>
+<meta name="description" content="Task calibration from real measurements and CAE: cable dynamics, RJ45 plug insertion forces, a full task demo, and the roadmap to cable–plug junction calibration and sim2real.">
+<title>TaskTuning — Cable, plug & task calibration</title>
 <style>
 :root{color-scheme:light;--ink:#172e40;--muted:#536672;--paper:#f7f5ef;--line:#d6dedc;--accent:#087e83}
 *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.65 system-ui,sans-serif}
@@ -24,21 +24,41 @@ h2{font-size:27px;letter-spacing:-.02em;margin:0 0 18px}.stages{display:grid;gri
 .stage{border-top:2px solid var(--accent);padding-top:18px}.stage small{font-weight:750;color:var(--accent)}h3{font-size:20px;margin:8px 0}.stage p{color:var(--muted);font-size:15px}
 .resources{padding:40px 0;display:flex;flex-wrap:wrap;gap:14px 26px}footer{border-top:1px solid var(--line);padding-top:22px;padding-bottom:30px;font-size:13px;color:var(--muted)}
 @media(max-width:680px){main,header,footer{padding-left:20px;padding-right:20px}.hero{padding-top:38px}.metrics{grid-template-columns:1fr;gap:18px}.metric{display:grid;grid-template-columns:125px 1fr;gap:12px;align-items:center}.metric strong{font-size:26px}.stages{grid-template-columns:1fr}.lead{font-size:17px}.button{width:100%;text-align:center}}
+html{scroll-behavior:smooth}section[id]{scroll-margin-top:24px}.chapter{padding:48px 0;border-top:1px solid var(--line)}
+header nav{display:flex;flex-wrap:wrap;gap:10px 20px}.status{display:inline-block;font-size:12px;font-weight:700;background:#e0eeea;color:#235950;padding:4px 9px;border-radius:4px}.pending{background:#eee4d4;color:#765321}
+video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#12232e;border:1px solid var(--line);border-radius:10px}.intro{max-width:850px;color:var(--muted)}
+.table-scroll{overflow-x:auto;margin:24px 0}table{border-collapse:collapse;width:100%;font-size:14px;text-align:left}th,td{padding:13px 14px;border-bottom:1px solid var(--line);vertical-align:top}thead{background:#e9eeea}caption{text-align:left;font-weight:650;margin-bottom:12px}
+.details{border:1px solid var(--line);border-radius:8px;padding:18px 22px;margin:24px 0}summary{cursor:pointer;font-weight:650}summary:focus-visible,video:focus-visible,.table-scroll:focus-visible{outline:3px solid #c48731;outline-offset:4px}.details figure{margin-bottom:0}.details p:last-child{margin-bottom:0}code{overflow-wrap:anywhere}.skip{position:absolute;left:20px;top:-100px;background:var(--paper);padding:12px;z-index:1}.skip:focus{top:10px}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}@media(max-width:680px){.chapter{padding:32px 0}th,td{padding:10px}header nav{gap:10px 16px}.details{padding:14px}.metric{grid-template-columns:115px 1fr}}
 </style>
 </head>
 <body>
-<header><div class="brand">TASKTUNING / RESULTS</div><a href="https://github.com/SamdianJ/TaskTuning">View repository ↗</a></header>
-<main>
+<a class="skip" href="#main">Skip to content</a>
+<header><div class="brand">TASKTUNING / RESULTS</div><nav aria-label="Main navigation"><a href="#demo">Demo</a><a href="#cable">Cable</a><a href="#plug">Plug</a><a href="#roadmap">Roadmap</a><a href="https://github.com/SamdianJ/TaskTuning">Repository ↗</a></nav></header>
+<main id="main">
 <section class="hero">
-<div class="eyebrow">Real measurements · Reproducible calibration</div>
-<h1>From cable measurements<br>to a better dynamic model.</h1>
-<p class="lead">A single calibration workflow connects evidence, simulation, search and validation. Follow the experiment from bending stiffness and damping, through clamp alignment, to a standard linear solid model.</p>
-<div class="buttons">
-<a class="button primary" href="examples/cable_calibration/reports/cable_calibration_en.html">Read the interactive report →</a>
-<a class="button" href="examples/cable_calibration/reports/cable_calibration_zh.html" lang="en">Chinese report →</a>
+<div class="eyebrow">Real measurements · CAE evidence · Task calibration</div>
+<h1>Calibrating the parts.<br>Reconstructing the task.</h1>
+<p class="lead">From cable dynamics to RJ45 plug insertion, we combine physical measurements, CAE evidence and simulation to build a calibrated model of a cable-handling task. Cable and plug experiments form the foundation; cable–plug junction calibration is the next step.</p>
+<div class="buttons"><a class="button primary" href="#demo">Watch the full demo →</a><a class="button" href="#plug">Explore plug calibration →</a><a class="button" href="#cable">Explore cable calibration →</a></div>
+<div class="stages" aria-label="Calibration scope">
+<article class="stage"><small>01 / CABLE</small><h3>Bending &amp; relaxation</h3><p>Real cable measurements identify stiffness, damping and the limits of a viscoelastic model.</p><span class="status">Experimental results available</span></article>
+<article class="stage"><small>02 / PLUG</small><h3>Contact &amp; insertion force</h3><p>Real robot force measurements and CAE component evidence inform the latch and equivalent metal-contact load.</p><span class="status">Force observations passed</span></article>
+<article class="stage"><small>03 / CABLE–PLUG JUNCTION</small><h3>Calibrating the connection</h3><p>The junction is a separate calibration stage for the complete task, with experiments still to come.</p><span class="status pending">Calibration not yet started</span></article>
 </div>
 </section>
-<section class="metrics" aria-label="Key results">
+<section id="demo" class="chapter" aria-labelledby="demo-title">
+<div class="eyebrow">The complete demonstration</div><h2 id="demo-title">From measurement to task reconstruction</h2>
+<p class="intro">Watch the full Synopsys Demo V6. Real2sim reconstruction is available today; sim2real work is in progress.</p>
+<figure><video controls playsinline preload="metadata" poster="assets/task-calibration/demo-poster.jpg" width="1920" height="1080" aria-label="Full Synopsys Demo V6: task calibration demonstration" aria-describedby="demo-caption"><source src="assets/task-calibration/synopsys-demo-v6.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/task-calibration/synopsys-demo-v6.mp4">Download the complete demo.</a></video>
+<figcaption id="demo-caption">Complete 55.7-second demo · 1080p / 60 fps · original audio preserved. <a href="assets/task-calibration/synopsys-demo-v6.mp4" download>Download video</a>.</figcaption></figure>
+<p class="intro">The full-scene replay and the latest local plug force candidate are separate experiment versions. The replay uses an earlier plug configuration and a cable driven by the plug poses, without cable reaction forces fed back to the rigid-body solver. It demonstrates task reconstruction; junction calibration and complete task validation remain open.</p>
+</section>
+<section id="cable" class="chapter" aria-labelledby="cable-title">
+<div class="eyebrow">01 / Cable calibration</div><h2 id="cable-title">From bending measurements to a dynamic model</h2>
+<p class="intro">A traceable workflow connects evidence, simulation, search and validation: fit bending stiffness and damping, test clamp alignment, then introduce standard linear solid (SLS) relaxation.</p>
+<div class="buttons"><a class="button" href="examples/cable_calibration/reports/cable_calibration_en.html">Interactive cable report →</a><a class="button" href="examples/cable_calibration/reports/cable_calibration_zh.html" lang="zh">中文线缆报告 →</a></div>
+<section class="metrics" aria-label="Cable calibration results">
 <div class="metric"><strong>0.844 mm</strong><span>SLS no-plug dynamic coordinate RMSE</span></div>
 <div class="metric"><strong>76.0%</strong><span>Lower objective, matched B* → C comparison</span></div>
 <div class="metric"><strong>32 segments</strong><span>Newton VBD deployment model</span></div>
@@ -47,12 +67,46 @@ h2{font-size:27px;letter-spacing:-.02em;margin:0 0 18px}.stages{display:grid;gri
 <a href="examples/cable_calibration/reports/cable_calibration_en.html#stages"><img src="examples/cable_calibration/reports/cable_calibration_preview.png" width="1920" height="864" alt="No-plug dynamic coordinate RMSE falls from A 3.230 mm to B 1.617 mm, B* 1.598 mm, and C 0.844 mm. Measured and predicted vertical trajectories are shown at 150 mm along the cable."></a>
 <figcaption>Rendered from archived measurements and simulation traces. B* and C share an objective; A → B also includes numerical and backend changes.</figcaption>
 </figure>
-<div class="note"><strong>Scope of the result.</strong> SLS improves the no-plug release fit. The plugged case still fails validation and numerical qualification; the historical result remains <code>rejected_validation</code>. These are equivalent parameters for the specified model, not validated universal material constants.</div>
-<section aria-labelledby="progress"><h2 id="progress">Why the model changed</h2><div class="stages">
+<div class="note"><strong>Scope of the result.</strong> SLS improves the no-plug release fit. The cable experiment with an attached plug still fails validation and numerical qualification; the historical result remains <code>rejected_validation</code>. These are equivalent parameters for the specified model, not validated universal material constants.</div>
+<section aria-labelledby="progress"><h2 id="progress">Why the cable model changed</h2><div class="stages">
 <article class="stage"><small>STAGE A</small><h3>Fit material response</h3><p>Optimizing EI and damping reduced error, but opposite static orientations traded off and dynamic maximum error remained above the limit.</p></article>
 <article class="stage"><small>STAGE B</small><h3>Test the fixed boundary</h3><p>A shared clamp-angle correction helped the joint fit. With static values conditionally frozen, viscous damping still traded oscillation amplitude against period.</p></article>
 <article class="stage"><small>STAGE C</small><h3>Add relaxation</h3><p>An SLS branch added transient rigidity and a relaxation time. No-plug dynamics improved, while attachment uncertainty and loaded numerics remained unresolved.</p></article>
 </div></section>
+</section>
+<section id="plug" class="chapter" aria-labelledby="plug-title">
+<div class="eyebrow">02 / Plug calibration</div><h2 id="plug-title">Real forces, explained with CAE evidence</h2>
+<p class="intro">A force sensor measures the combined insertion load. Ansys Motion deformation and contact evidence help distinguish the upper latch from the metal electrical contacts. This distinction exposed a missing load contribution that latch stiffness, damping or friction alone could not reliably absorb.</p>
+<div class="stages">
+<article class="stage"><small>MEASURE</small><h3>Five real robot repeats</h3><p>Piper insertion recordings provide axial and lateral force references. All five repeats are scored separately with fixed comparison windows and a shared simulation clock.</p></article>
+<article class="stage"><small>EXPLAIN</small><h3>Separate the load sources</h3><p>The CAE metal-contact channel has an axial peak of about 5.61 N and excludes the upper latch load. It informs a component of the model; the measured robot total peaks at 11.03–11.59 N.</p></article>
+<article class="stage"><small>CALIBRATE</small><h3>Apply the load in dynamics</h3><p>A two-parameter, insertion-depth-dependent equivalent load is fitted to real force evidence and applied inside Newton / MuJoCo-Warp. Plug motion, latch angle and contact forces respond to it.</p></article>
+</div>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Plug model comparison"><table>
+<caption>What changes when the missing load is included?</caption><thead><tr><th scope="col">Model comparison</th><th scope="col">Worst axial peak error</th><th scope="col">Worst axial NRMSE</th><th scope="col">Evidence</th></tr></thead><tbody>
+<tr><th scope="row">A · Contact-only baseline</th><td>65.32%</td><td>52.76%</td><td>Physical simulation</td></tr>
+<tr><th scope="row">B · Baseline + CAE metal load</th><td>17.03%</td><td>18.93%</td><td>Retrospective offline addition; no amplitude fit</td></tr>
+<tr><th scope="row">C · Real-calibrated equivalent load</th><td>4.18%</td><td>4.39%</td><td>Coupled physical simulation</td></tr>
+</tbody></table></div>
+<p class="intro">A and C use the same 1/9600 s step. B was constructed later to test the missing-load explanation, using a common event-based time mapping. It was not a newly executed training stage leading to C, and its aligned events are not independent timing validation.</p>
+<figure><a href="assets/task-calibration/plug-cae-comparison.png"><img src="assets/task-calibration/plug-cae-comparison.png" loading="lazy" width="1870" height="1870" alt="Five real Piper force curves compared with contact-only dynamics, a retrospective CAE metal-load addition, and the real-calibrated coupled model. Worst axial NRMSE decreases from 52.76% to 18.93% to 4.39%."></a><figcaption>Archived comparison at a shared simulation step. CAE provides a useful loading trend; its unloading behavior differs from the equivalent load. Open the figure for full resolution.</figcaption></figure>
+<h3>Latest physical result</h3><p class="intro">At the finer 1/19200 s step, the full 9.3-second simulation reaches an axial peak of about 11.12 N. All five development repeats meet the current force, trend and total-force event-time criteria.</p>
+<section class="metrics" aria-label="Latest plug calibration results"><div class="metric"><strong>4.54%</strong><span>Worst axial force NRMSE · ≤10% criterion</span></div><div class="metric"><strong>14.80%</strong><span>Worst lateral force NRMSE · ≤30% criterion</span></div><div class="metric"><strong>5 / 5</strong><span>Development repeats meet observation criteria</span></div></section>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Latest plug acceptance metrics"><table><caption>Worst error across the five real recordings</caption><thead><tr><th scope="col">Observation</th><th scope="col">Latest result</th><th scope="col">Criterion</th></tr></thead><tbody>
+<tr><th scope="row">Axial force peak / NRMSE</th><td>4.12% / 4.54%</td><td>Each ≤10%</td></tr><tr><th scope="row">Lateral force peak / NRMSE</th><td>13.71% / 14.80%</td><td>Each ≤30%</td></tr><tr><th scope="row">Total-force loading event</th><td>4.22% · 0.184 s</td><td>≤10% · 0.436 s</td></tr><tr><th scope="row">Total-force release event</th><td>7.22% · 0.315 s</td><td>≤10% · 0.436 s</td></tr><tr><th scope="row">Loading rise / release fall</th><td>Both satisfied for all five</td><td>Both required</td></tr>
+</tbody></table></div>
+<p class="intro">NRMSE is computed over each active loading window and normalized by its real force peak. Timing errors use the fixed 4.36 s median real loading duration. The percentages do not represent pointwise error bounds.</p>
+<details class="details"><summary>Inspect force components, latch recovery and numerical qualification</summary>
+<p>The equivalent load follows <code>F(s) = k × clip(s − s₀, 0, L)</code>, with <code>k = 1383.238695 N/m</code>, <code>s₀ = 2.98159284 mm</code> and fixed <code>L = 10 mm</code>. Depth is read from the actual plug pose at every substep. This is an effective axial model; its residual load cannot be uniquely attributed to metal elasticity.</p>
+<p>In the latest candidate, the release drop comes from changing latch contact while the equivalent load continues to rise. This describes the candidate's internal mechanism, not an independently measured decomposition of the real release.</p>
+<figure><a href="assets/task-calibration/plug-force-validation.png"><img src="assets/task-calibration/plug-force-validation.png" width="2550" height="1350" loading="lazy" alt="Latest axial and lateral force comparisons, contact and equivalent-load decomposition, timestep differences, and latch recovery."></a><figcaption>Archived latest refinement report: stage1_loaded_finer, 19 October 2026.</figcaption></figure>
+</details>
+<div class="note"><strong>Observation criteria passed; qualification remains open.</strong> All five Piper repeats were used for development, with no independent holdout. The timestep feature change is 0.028135, above the existing 0.015 budget. Different speeds, withdrawal, pull-out locking and complete wrench behavior remain unvalidated for this candidate. The latest local force model has not been integrated into the full robot replay.</div>
+<p><a href="assets/task-calibration/plug-evidence.json">Download the plug evidence summary and source hashes →</a></p>
+</section>
+<section id="roadmap" class="chapter" aria-labelledby="roadmap-title"><div class="eyebrow">03 / Junction &amp; complete task</div><h2 id="roadmap-title">From component calibration to sim2real</h2>
+<div class="stages"><article class="stage"><small>AVAILABLE</small><h3>Real2sim reconstruction</h3><p>Recorded robot motion, plug contact and a pose-driven cable have been assembled into a complete task replay, with control corrections for grasping, alignment, insertion and release.</p></article><article class="stage"><small>PLANNED</small><h3>Cable–plug junction</h3><p>Junction calibration has not started. The current prescribed connection and one-way cable drive do not establish a calibrated, bidirectionally coupled junction.</p></article><article class="stage"><small>IN PROGRESS</small><h3>Sim2real</h3><p>Transfer work is ongoing. Component results and the reconstruction demo are milestones toward this goal; end-to-end transfer validation is still to come.</p></article></div>
+</section>
 <nav class="resources" aria-label="Supporting resources">
 <a href="https://github.com/SamdianJ/TaskTuning/blob/main/examples/cable_calibration/README.md">Case and reproduction guide ↗</a>
 <a href="https://github.com/SamdianJ/TaskTuning/blob/main/docs/user-guide.md">TaskTuning user guide ↗</a>
@@ -60,6 +114,6 @@ h2{font-size:27px;letter-spacing:-.02em;margin:0 0 18px}.stages{display:grid;gri
 <a href="https://github.com/SamdianJ/TaskTuning/tree/main/examples/cable_calibration/archive">Data and diagnostics ↗</a>
 </nav>
 </main>
-<footer>Evidence through 13 October 2026 · Newton VBD / Warp CUDA · TaskTuning 0.2.0<br>Both reports include embedded figures and can also be downloaded for offline reading.</footer>
+<footer>Cable evidence: 13 October 2026 · Plug evidence: 19 October 2026 · Project status: 27 October 2026<br>Newton VBD / MuJoCo-Warp · TaskTuning · Real measurements + CAE</footer>
 </body>
 </html>

@@ -18,7 +18,9 @@ GitHub documents this setup in [Configuring a publishing source](https://docs.gi
 
 ## Public entry points
 
-- [Results homepage](https://samdianj.github.io/TaskTuning/)
+- [Results homepage](https://samdianj.github.io/TaskTuning/) — cable, plug, junction roadmap, and full demo
+- [Plug results](https://samdianj.github.io/TaskTuning/#plug)
+- [Full task demo](https://samdianj.github.io/TaskTuning/#demo)
 - [English report](https://samdianj.github.io/TaskTuning/examples/cable_calibration/reports/cable_calibration_en.html)
 - [Chinese report](https://samdianj.github.io/TaskTuning/examples/cable_calibration/reports/cable_calibration_zh.html)
 
@@ -49,3 +51,11 @@ python -m http.server 8000 --bind 127.0.0.1
 Visit `http://127.0.0.1:8000/`. Check the desktop and narrow layouts, both language links, chart toggles in the report, and source links to GitHub. Stop the server when finished.
 
 After pushing, confirm the Pages deployment succeeds and check the homepage, both reports, and preview image over HTTPS. A successful Git push alone does not prove the website is live.
+
+## Plug results and full demo
+
+The homepage publishes the local RJ45 insertion evidence through 19 October 2026, with project status updated on 27 October. `assets/task-calibration/plug-evidence.json` records the displayed metrics and SHA-256 hashes of the experiment sources. The two PNG figures are copied from the archived CAE comparison and latest timestep-refinement report.
+
+Keep the comparison scopes separate: the CAE intermediate is a retrospective offline addition, while the real-calibrated candidate applies an equivalent force inside the dynamics. The five development recordings pass the stated observation criteria; numerical qualification and independent holdout validation remain open. The latest local force candidate is not the configuration used in the full-scene replay. Junction calibration has not started; real2sim reconstruction is available and sim2real is in progress.
+
+`synopsys-demo-v6.mp4` is the complete 55.7-second source demo transcoded to H.264 CRF 22 with fast-start metadata. It retains 1920×1080, 60 fps, and the original AAC audio stream. `demo-provenance.json` records source and web-file hashes. The page uses native playback controls, no autoplay, a poster, and a download link. To replace the demo, preserve full duration and audio, decode the entire output to check it, verify the playback metadata, then check the published MP4 response and byte-range support.

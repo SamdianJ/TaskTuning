@@ -1,0 +1,60 @@
+{
+  "evidence_date": "2026-10-19",
+  "scope": "Local RJ45 insertion candidate; five Piper development repeats; no independent holdout; not integrated into the full robot replay",
+  "status": "coupled_force_observations_passed_numerical_qualification_failed",
+  "latest": {
+    "dt_s": 5.208333333333334e-05,
+    "duration_s": 9.3,
+    "axial_peak_N": 11.12341,
+    "worst_errors_percent": {
+      "axial_peak": 4.12,
+      "axial_NRMSE": 4.54,
+      "lateral_peak": 13.71,
+      "lateral_NRMSE": 14.8,
+      "loading_time": 4.22,
+      "release_time": 7.22
+    },
+    "numerical_feature_change": 0.028135,
+    "numerical_budget": 0.015
+  },
+  "matched_step_comparison": {
+    "dt_s": 0.00010416666666666667,
+    "A": {
+      "kind": "physical contact-only baseline",
+      "worst_axial_peak_error_percent": 65.32,
+      "worst_axial_NRMSE_percent": 52.76
+    },
+    "B": {
+      "kind": "retrospective offline CAE addition with common event mapping; no amplitude fit; not training initialization of C",
+      "worst_axial_peak_error_percent": 17.03,
+      "worst_axial_NRMSE_percent": 18.93
+    },
+    "C": {
+      "kind": "previously calibrated physically coupled equivalent load",
+      "worst_axial_peak_error_percent": 4.18,
+      "worst_axial_NRMSE_percent": 4.39
+    }
+  },
+  "sources": [
+    {
+      "experiment_relative_path": "CURRENT_PROGRESS.md",
+      "sha256": "f4e02bbdd7152587d3a11f2bdd9941efec5b2bc9c997ec75624ccbef136f8ef6"
+    },
+    {
+      "experiment_relative_path": "plug_calibration/CALIBRATION_PROGRESS_REPORT_20261019.md",
+      "sha256": "e34b088708181f686dba6159eb279561a91c869e1755bf2bac056bdcd351792b"
+    },
+    {
+      "experiment_relative_path": "plug_calibration/CAE/force/cae_intermediate_retrospective_20261019/comparison.json",
+      "sha256": "6b010aa5c28cb1ad7582a7d1edb7c9a0527850301beafe483fa3c2d7d4b21229"
+    },
+    {
+      "experiment_relative_path": "plug_calibration/piper_force_calibration/baseline_restart/axial_priority_20261019/stage1_loaded_finer_acceptance.json",
+      "sha256": "49b6a6058caad113e09e0c2257af776cf5fe15bfbb20adac8bd124d7731301a1"
+    },
+    {
+      "experiment_relative_path": "plug_calibration/piper_force_calibration/baseline_restart/axial_priority_20261019/stage1_loaded_finer_refinement.json",
+      "sha256": "6c6306bbc03bbe32ec042e5c95894666972993e4d77a6ce31efdb4d6ab84ec7f"
+    }
+  ]
+}
