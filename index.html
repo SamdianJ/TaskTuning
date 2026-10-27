@@ -29,11 +29,12 @@ header nav{display:flex;flex-wrap:wrap;gap:10px 20px}.status{display:inline-bloc
 video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#12232e;border:1px solid var(--line);border-radius:10px}.intro{max-width:850px;color:var(--muted)}
 video:focus-visible{outline:3px solid #c48731;outline-offset:4px}code{overflow-wrap:anywhere}.skip{position:absolute;left:20px;top:-100px;background:var(--paper);padding:12px;z-index:1}.skip:focus{top:10px}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}@media(max-width:680px){.chapter{padding:32px 0}header nav{gap:10px 16px}.metric{grid-template-columns:115px 1fr}}
+.pipeline-steps{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;list-style:none;padding:0;margin:28px 0}.pipeline-steps li{border-top:2px solid var(--accent);padding-top:12px}.pipeline-steps span{display:block;font-size:12px;color:var(--accent);font-weight:750}.pipeline-steps strong{display:block;font-size:15px}.pipeline-steps p{font-size:13px;color:var(--muted);margin:6px 0}@media(max-width:850px){.pipeline-steps{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:480px){.pipeline-steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<header><div class="brand">TASKTUNING / RESULTS</div><nav aria-label="Main navigation"><a href="#demo">Demo</a><a href="#cable">Cable</a><a href="#plug">Plug</a><a href="#roadmap">Roadmap</a><a href="https://github.com/SamdianJ/TaskTuning">Repository ↗</a></nav></header>
+<header><div class="brand">TASKTUNING / RESULTS</div><nav aria-label="Main navigation"><a href="#demo">Demo</a><a href="#pipeline">Pipeline</a><a href="#cable">Cable</a><a href="#plug">Plug</a><a href="#roadmap">Roadmap</a><a href="https://github.com/SamdianJ/TaskTuning">Repository ↗</a></nav></header>
 <main id="main">
 <section class="hero">
 <div class="eyebrow">Real measurements · CAE evidence · Task calibration</div>
@@ -52,6 +53,25 @@ video:focus-visible{outline:3px solid #c48731;outline-offset:4px}code{overflow-w
 <figure><video controls playsinline preload="metadata" poster="assets/task-calibration/demo-poster.jpg" width="1920" height="1080" aria-label="Full Synopsys Demo V6: task calibration demonstration" aria-describedby="demo-caption"><source src="assets/task-calibration/synopsys-demo-v6.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/task-calibration/synopsys-demo-v6.mp4">Download the complete demo.</a></video>
 <figcaption id="demo-caption">Complete 55.7-second demo · 1080p / 60 fps · original audio preserved. <a href="assets/task-calibration/synopsys-demo-v6.mp4" download>Download video</a>.</figcaption></figure>
 <p class="intro">The demo shows the current task reconstruction. The latest local plug calibration is a separate experiment; see the <a href="examples/plug_calibration/reports/plug_calibration_en.html#scope">report for its validation and integration status</a>.</p>
+</section>
+<section id="pipeline" class="chapter" aria-labelledby="pipeline-title">
+<div class="eyebrow">The calibration pipeline</div><h2 id="pipeline-title">Agent-driven decisions. A traceable calibration workflow.</h2>
+<p class="intro">The agent uses evidence to define a testable model and calibration task. TaskTuning runs a bounded solve under fixed conditions, then returns candidates, scores and diagnostics so the agent can decide whether to refine parameters, revise the model or collect more data.</p>
+<div class="stages" aria-label="Agent and runtime responsibilities">
+<article class="stage"><small>AGENT / DEFINE</small><h3>Turn evidence into a task</h3><p>Choose the model, physical boundaries, parameters, observations, acceptance criteria and budget. Five configuration skills help produce a shared specification and an executable Tuning factory.</p></article>
+<article class="stage"><small>TASKTUNING / EXECUTE</small><h3>Run one consistent lifecycle</h3><p>Ten members share one simulation and scoring path. The optimizer proposes candidates; Decision controls budgets and stopping; the frozen candidate is reloaded for final checks.</p></article>
+<article class="stage"><small>AGENT / REVIEW</small><h3>Use diagnostics to choose what follows</h3><p>Distinguish parameter error, observation issues, missing physics and insufficient evidence. A changed model or scoring protocol becomes a fresh task, with earlier runs preserved.</p></article>
+</div>
+<ol class="pipeline-steps" aria-label="Six stages of one calibration run">
+<li><span>01 / DEFINE</span><strong>Prepare &amp; freeze</strong><p>Evidence, asset and conditions</p></li>
+<li><span>02 / QUALIFY</span><strong>Check numerics</strong><p>Declared numerical policy</p></li>
+<li><span>03 / ANALYZE</span><strong>Identify parameters</strong><p>Sensitivity and identifiability</p></li>
+<li><span>04 / SEARCH</span><strong>Simulate &amp; score</strong><p>Candidate batches within budget</p></li>
+<li><span>05 / VALIDATE</span><strong>Reload &amp; retest</strong><p>Training, validation and numerics</p></li>
+<li><span>06 / RECORD</span><strong>Save &amp; present</strong><p>Release only on acceptance</p></li>
+</ol>
+<p class="intro"><strong>Stopping is not acceptance.</strong> Reaching a target or exhausting a budget ends search; acceptance requires the specified final checks. Results and diagnostics remain traceable even when a candidate is not accepted.</p>
+<div class="buttons"><a class="button primary" href="pipeline.html">Explore the calibration pipeline →</a><a class="button" href="pipeline.html#usage">Agent integration &amp; responsibilities →</a></div>
 </section>
 <section id="cable" class="chapter" aria-labelledby="cable-title">
 <div class="eyebrow">01 / Cable calibration</div><h2 id="cable-title">From bending measurements to a dynamic model</h2>
@@ -85,6 +105,7 @@ video:focus-visible{outline:3px solid #c48731;outline-offset:4px}code{overflow-w
 <div class="stages"><article class="stage"><small>AVAILABLE</small><h3>Real2sim reconstruction</h3><p>Recorded robot motion, plug contact and a pose-driven cable have been assembled into a complete task replay, with control corrections for grasping, alignment, insertion and release.</p></article><article class="stage"><small>PLANNED</small><h3>Cable–plug junction</h3><p>Junction calibration has not started. The current prescribed connection and one-way cable drive do not establish a calibrated, bidirectionally coupled junction.</p></article><article class="stage"><small>IN PROGRESS</small><h3>Sim2real</h3><p>Transfer work is ongoing. Component results and the reconstruction demo are milestones toward this goal; end-to-end transfer validation is still to come.</p></article></div>
 </section>
 <nav class="resources" aria-label="Supporting resources">
+<a href="pipeline.html">Calibration pipeline &amp; agent workflow →</a>
 <a href="https://github.com/SamdianJ/TaskTuning/blob/main/examples/cable_calibration/README.md">Case and reproduction guide ↗</a>
 <a href="https://github.com/SamdianJ/TaskTuning/blob/main/docs/user-guide.md">TaskTuning user guide ↗</a>
 <a href="https://github.com/SamdianJ/TaskTuning/blob/main/docs/codex-skills.md">Codex skills ↗</a>
