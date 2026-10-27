@@ -180,8 +180,8 @@
     },
     "reports/cable_calibration_en.html": {
       "original_sha256": "6f637d8713d38854b93f8d2b9450edb05a379b63789438306602a82a76dc2fe0",
-      "export_sha256": "4daf68ec1ea8b897fff29caa5d6fbb60ec998bc630b23113071be726519afe2c",
-      "changes": "Source hrefs relocated into this repository; language-switch label translated to English. Source links now target GitHub; added a Pages home link and updated the source-link note."
+      "export_sha256": "b879b77e644860fb71eefddd650f126ccfe7b5484c3a1601a5bd1f62696adce3",
+      "changes": "Source hrefs relocated into this repository; language-switch label translated to English. Source links now target GitHub; added a Pages home link and updated the source-link note. Removed the duplicate Tuning and Skills chapters; renumbered the remaining experiment chapters and focused the introduction on cable results. Pipeline navigation now points to the dedicated design page; experiment figures, data and conclusions are unchanged."
     }
   },
   "derived_files": {
