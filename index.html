@@ -30,6 +30,7 @@ video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#12232e;
 video:focus-visible{outline:3px solid #c48731;outline-offset:4px}code{overflow-wrap:anywhere}.skip{position:absolute;left:20px;top:-100px;background:var(--paper);padding:12px;z-index:1}.skip:focus{top:10px}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}@media(max-width:680px){.chapter{padding:32px 0}header nav{gap:10px 16px}.metric{grid-template-columns:115px 1fr}}
 
+.comparisons .metric{display:block;min-width:0}.comparisons .metric strong{font-size:clamp(22px,2.25vw,28px);margin:7px 0;line-height:1.4}.comparisons .metric .improvement{color:var(--accent);font-weight:700}.comparison-context{font-size:13px;color:var(--muted);margin:12px 0 24px}
 </style>
 </head>
 <body>
@@ -67,11 +68,12 @@ video:focus-visible{outline:3px solid #c48731;outline-offset:4px}code{overflow-w
 <div class="eyebrow">01 / Cable calibration</div><h2 id="cable-title">From bending measurements to a dynamic model</h2>
 <p class="intro">A traceable workflow connects evidence, simulation, search and validation: fit bending stiffness and damping, test clamp alignment, then introduce standard linear solid (SLS) relaxation.</p>
 <div class="buttons"><a class="button" href="examples/cable_calibration/reports/cable_calibration_en.html">Interactive cable report →</a><a class="button" href="examples/cable_calibration/reports/cable_calibration_zh.html" lang="zh">中文线缆报告 →</a></div>
-<section class="metrics" aria-label="Cable calibration results">
-<div class="metric"><strong>0.844 mm</strong><span>SLS no-plug dynamic coordinate RMSE</span></div>
-<div class="metric"><strong>76.0%</strong><span>Lower objective, matched B* → C comparison</span></div>
-<div class="metric"><strong>32 segments</strong><span>Newton VBD deployment model</span></div>
+<section class="metrics comparisons" aria-label="Cable calibration before and after">
+<div class="metric"><span>Dynamic coordinate RMSE</span><strong>1.598 mm → 0.844 mm</strong><span class="improvement">Improvement: 47.2%</span></div>
+<div class="metric"><span>Dynamic objective</span><strong>0.5093 → 0.1222</strong><span class="improvement">Improvement: 76.0%</span></div>
+<div class="metric"><span>Maximum coordinate error</span><strong>9.353 mm → 3.203 mm</strong><span class="improvement">Improvement: 65.8%</span></div>
 </section>
+<p class="comparison-context">Kelvin baseline (B*) → calibrated SLS (C), no-plug dynamics. Improvement is the relative reduction in each error metric.</p>
 <figure>
 <a href="examples/cable_calibration/reports/cable_calibration_en.html#stages"><img src="examples/cable_calibration/reports/cable_calibration_preview.png" width="1920" height="864" alt="No-plug dynamic coordinate RMSE falls from A 3.230 mm to B 1.617 mm, B* 1.598 mm, and C 0.844 mm. Measured and predicted vertical trajectories are shown at 150 mm along the cable."></a>
 <figcaption>Rendered from archived measurements and simulation traces. B* and C share an objective; A → B also includes numerical and backend changes.</figcaption>
@@ -87,7 +89,12 @@ video:focus-visible{outline:3px solid #c48731;outline-offset:4px}code{overflow-w
 <div class="eyebrow">02 / Plug calibration</div><h2 id="plug-title">From real measurements and CAE to matching insertion forces</h2>
 <p class="intro">The calibrated plug model reproduces the measured axial and lateral insertion forces. One physical candidate meets the current force and event-time criteria across all five real robot development recordings.</p>
 <div class="buttons"><a class="button" href="examples/plug_calibration/reports/plug_calibration_en.html">Read the plug calibration report →</a></div>
-<section class="metrics" aria-label="Latest plug calibration results"><div class="metric"><strong>4.54%</strong><span>Worst axial force NRMSE</span></div><div class="metric"><strong>14.80%</strong><span>Worst lateral force NRMSE</span></div><div class="metric"><strong>5 / 5</strong><span>Development repeats meet observation criteria</span></div></section>
+<section class="metrics comparisons" aria-label="Plug calibration before and after">
+<div class="metric"><span>Worst axial force NRMSE</span><strong>52.76% → 4.39%</strong><span class="improvement">Improvement: 91.7%</span></div>
+<div class="metric"><span>Worst axial peak error</span><strong>65.32% → 4.18%</strong><span class="improvement">Improvement: 93.6%</span></div>
+<div class="metric"><span>Worst lateral force NRMSE</span><strong>14.82% → 14.81%</strong><span class="improvement">Improvement: 0.1%</span></div>
+</section>
+<p class="comparison-context">Contact-only baseline (A) → calibrated coupled model (C), compared at the same timestep across five development recordings. Improvement is the relative error reduction; the lateral fit is essentially unchanged. <a href="examples/plug_calibration/reports/plug_calibration_en.html#results">Latest refinement results →</a></p>
 <figure><a href="examples/plug_calibration/reports/plug_calibration_en.html#results"><img src="assets/task-calibration/plug-final-preview.png" width="1920" height="750" loading="lazy" alt="Latest calibrated simulation compared with five real Piper recordings: axial and lateral insertion force on the shared clock."></a><figcaption>Latest physical candidate versus five real robot recordings. Real curves are shown only in their fixed evaluation windows.</figcaption></figure>
 <div class="note"><strong>Scope of the result.</strong> Force observations pass on the development data; numerical qualification and independent validation remain open. <a href="examples/plug_calibration/reports/plug_calibration_en.html#scope">See validation scope →</a></div>
 </section>
