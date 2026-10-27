@@ -39,5 +39,19 @@
   "crf": 22,
   "preset": "medium",
   "audio": "stream copy",
-  "poster_source_time_s": 10
+  "poster_source_time_s": 10,
+  "report_stills": [
+    {
+      "file": "cae-metal-contacts-25p5s.jpg",
+      "source_time_s": 25.5,
+      "sha256": "8ed465fc7b8852b560f138696bb11f5283dab29f369e5f15acee26d3d495bb41",
+      "processing": "Full frame extracted from original source with ffmpeg; JPEG q=2; no crop, added annotations, or geometry edits."
+    },
+    {
+      "file": "cae-metal-contacts-26p5s.jpg",
+      "source_time_s": 26.5,
+      "sha256": "a13dbe033fe431938b555c0be2572e747e2b942c2790e0eeff43d69985815ef6",
+      "processing": "Full frame extracted from original source with ffmpeg; JPEG q=2; no crop, added annotations, or geometry edits."
+    }
+  ]
 }
