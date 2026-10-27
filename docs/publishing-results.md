@@ -21,7 +21,7 @@ GitHub documents this setup in [Configuring a publishing source](https://docs.gi
 - [Results homepage](https://samdianj.github.io/TaskTuning/) — cable, plug, junction roadmap, and full demo
 - [Plug result preview](https://samdianj.github.io/TaskTuning/#plug)
 - [Plug calibration report](https://samdianj.github.io/TaskTuning/examples/plug_calibration/reports/plug_calibration_en.html)
-- [Calibration pipeline](https://samdianj.github.io/TaskTuning/pipeline.html) — six-stage workflow, ten members, skills and agent integration
+- [Calibration pipeline](https://samdianj.github.io/TaskTuning/pipeline.html) — main workflow, ten members and two usage modes
 - [Full task demo](https://samdianj.github.io/TaskTuning/#demo)
 - [English report](https://samdianj.github.io/TaskTuning/examples/cable_calibration/reports/cable_calibration_en.html)
 - [Chinese report](https://samdianj.github.io/TaskTuning/examples/cable_calibration/reports/cable_calibration_zh.html)
@@ -64,6 +64,6 @@ Keep the comparison scopes separate: the CAE intermediate is a retrospective off
 
 ## Agent-driven calibration pipeline
 
-The homepage `#pipeline` section introduces the outer-agent / inner-runtime responsibilities and links to `pipeline.html`. The detail page adapts the supplied `newton-calibration-seed/index_en.html` design, retaining its six-stage selector, qualification-mode selector, ten-member reference, five-skill routing and agent integration contract. It is a documentation update only; runtime implementation and experiment acceptance statuses are unchanged.
+The homepage `#pipeline` section contains only the Agent / Define, TaskTuning / Execute and Agent / Review blocks, plus a link to `pipeline.html`. The detail page adapts the supplied `newton-calibration-seed/index_en.html` design into three chapters: The Main Workflow, The Tuning Modules and Two Ways to Use TaskTuning. It retains the six-stage selector, qualification-mode selector, ten-member reference and usage / integration contract; the separate skills, evaluation-path, acceptance and artifact sections are removed. It is a documentation update only; runtime implementation and experiment acceptance statuses are unchanged.
 
 The English detail page links back to this results site and its cable/plug reports. Supporting Markdown guides and skills open the public repository; source-code and unavailable companion-page links are not carried over. The design snapshot can be newer than the published runtime baseline. Check all six stage buttons, previous/next boundaries, both qualification modes and cross-page anchors when validating changes.
