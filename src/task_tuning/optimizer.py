@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 Lightwheel
+# SPDX-License-Identifier: Apache-2.0
+
 """Ask/tell strategies. No optimizer is permitted to stop the Tuning loop."""
 
 import itertools

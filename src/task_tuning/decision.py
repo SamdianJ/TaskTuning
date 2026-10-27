@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 Lightwheel
+# SPDX-License-Identifier: Apache-2.0
+
 """The sole authority for stopping or authorizing work."""
 
 import math

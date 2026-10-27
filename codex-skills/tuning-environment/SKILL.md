@@ -21,6 +21,8 @@ Check actual solver binding and readback, derived parameter mappings, and indepe
 
 Translate physical error budgets to Evaluator features with the actual scale, weights, mask, and sample count. A frozen dictionary does not establish backend correctness. If a required locked setting cannot pass qualification, report the gap; do not manufacture a pass.
 
+Template defaults to `qualification_mode="refinement"` and requires actual refinements. Only an explicit fixed-configuration decision permits `qualification_mode="repeatability"` with no refinements. That mode repeats the same settings and seeds; it does not prove convergence or cross-seed robustness. Record its `fixed_configuration_only` scope and retain independent accuracy checks as separate requirements. Never choose repeatability merely to bypass failed refinement.
+
 Run qualification only within the authorized scope and budget. Record standalone setup experiments separately: they are not automatically counted by RunState.
 
 ## Execution and presentation

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 Lightwheel
+# SPDX-License-Identifier: Apache-2.0
+
 """Parameter encoding and feasible combinations; analysis belongs to Tuning."""
 
 import math

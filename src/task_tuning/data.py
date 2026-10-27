@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 Lightwheel
+# SPDX-License-Identifier: Apache-2.0
+
 """Records shared by the ten members; only Tuning mutates RunState."""
 
 from __future__ import annotations

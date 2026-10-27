@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 Lightwheel
+# SPDX-License-Identifier: Apache-2.0
+
 """Immutable, explicit single-environment construction conditions."""
 
 import math
@@ -15,6 +18,7 @@ class Template:
         experiment_settings,
         refinements=(),
         precision_tolerance=0.05,
+        qualification_mode="refinement",
     ):
         self.numeric_settings = dict(numeric_settings)
         self.discretization = dict(discretization)
@@ -22,6 +26,7 @@ class Template:
         self.experiment_settings = dict(experiment_settings)
         self.refinements = tuple(refinements)
         self.precision_tolerance = precision_tolerance
+        self.qualification_mode = qualification_mode
         self._frozen = False
 
     def __setattr__(self, name, value):
@@ -30,6 +35,10 @@ class Template:
         object.__setattr__(self, name, value)
 
     def resolve(self):
+        if self.qualification_mode not in {"refinement", "repeatability"}:
+            raise ValueError("unknown qualification mode")
+        if self.qualification_mode == "repeatability" and self.refinements:
+            raise ValueError("fixed-configuration repeatability cannot include refinements")
         if not self.numeric_settings or not self.experiment_settings:
             raise ValueError("numeric settings and experiment definitions must be explicit")
         if not math.isfinite(self.precision_tolerance) or self.precision_tolerance <= 0:
@@ -58,6 +67,7 @@ class Template:
                 "experiment_settings",
                 "refinements",
                 "precision_tolerance",
+                "qualification_mode",
             )
         }
 
@@ -97,3 +107,17 @@ class Template:
             raise ValueError("each experiment must explicitly declare its seed")
         complete = {**dict(self.fixed_parameters), **parameter_values}
         return asset.create_environment(self, complete, settings)
+
+    def instantiate_batch(self, asset, parameter_values, experiment):
+        """Create one BatchEnvironment for several candidates, with the checks of instantiate."""
+        if not self._frozen:
+            raise RuntimeError("freeze Template before executing")
+        settings = self.experiment_settings[experiment.id]
+        if "seed" not in settings:
+            raise ValueError("each experiment must explicitly declare its seed")
+        complete = []
+        for values in parameter_values:
+            if set(values) & set(self.fixed_parameters):
+                raise ValueError("a parameter cannot be both calibrated and fixed")
+            complete.append({**dict(self.fixed_parameters), **values})
+        return asset.create_batch_environment(self, tuple(complete), settings)

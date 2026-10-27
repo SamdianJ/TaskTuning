@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 Lightwheel
+# SPDX-License-Identifier: Apache-2.0
+
 """Vectorized tensor scoring with fixed masks and complete episode identities."""
 
 import math

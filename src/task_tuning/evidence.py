@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 Lightwheel
+# SPDX-License-Identifier: Apache-2.0
+
 """Prepared observations; acquisition groups enforce independent holdout data."""
 
 from dataclasses import dataclass

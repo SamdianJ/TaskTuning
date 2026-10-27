@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 Lightwheel
+# SPDX-License-Identifier: Apache-2.0
+
 """The common lifecycle. Cases compose members and do not replace run()."""
 
 from __future__ import annotations
@@ -83,7 +86,14 @@ class Tuning:
             "minimum_batch": count if minimum_batch is None else minimum_batch,
             "reserve_rollouts": (
                 sum(e.repeats for e in self.evidence.validation_data)
-                + (1 + len(self.template.refinements))
+                + (
+                    1
+                    + (
+                        1
+                        if self.template.qualification_mode == "repeatability"
+                        else len(self.template.refinements)
+                    )
+                )
                 * sum(e.repeats for e in self.evidence.train_data)
                 if purpose not in {"validation", "training_retest", "failure"}
                 else 0
@@ -286,7 +296,7 @@ class Tuning:
         self._baseline = self.evaluate_batch(baseline, self.evidence.train_data, "baseline")
         if not self._baseline.valid_mask.all():
             raise RuntimeError("baseline did not produce complete finite observations")
-        if not self.template.refinements:
+        if self.template.qualification_mode == "refinement" and not self.template.refinements:
             self.state.analysis_reports["numerical"] = {
                 "passed": False,
                 "reason": "declare at least one numerical refinement",
@@ -303,10 +313,17 @@ class Tuning:
         probes = self._physical_trials(anchors, "qualification")
         coarse = self.evaluate_batch(probes, self.evidence.train_data, "qualification")
         reports = []
-        for change in self.template.refinements:
-            refined_template = self.template.refined(change)
-            if refined_template.numeric_settings == self.template.numeric_settings and (
-                refined_template.discretization == self.template.discretization
+        changes = (
+            (None,)
+            if self.template.qualification_mode == "repeatability"
+            else self.template.refinements
+        )
+        for change in changes:
+            refined_template = self.template if change is None else self.template.refined(change)
+            if (
+                change is not None
+                and refined_template.numeric_settings == self.template.numeric_settings
+                and (refined_template.discretization == self.template.discretization)
             ):
                 raise ValueError("refinement must actually change numerical or discrete settings")
             refined = self.evaluate_batch(
@@ -323,12 +340,16 @@ class Tuning:
                 }
             )
         self.state.analysis_reports["numerical"] = {
+            "mode": self.template.qualification_mode,
+            "scope": "fixed_configuration_only"
+            if self.template.qualification_mode == "repeatability"
+            else "declared_refinements",
             "passed": all(x["passed"] for x in reports),
             "probes": reports,
             "tolerance": self.template.precision_tolerance,
         }
         if not self.state.analysis_reports["numerical"]["passed"]:
-            raise ValueError("numerical refinement difference exceeds tolerance")
+            raise ValueError(f"{self.template.qualification_mode} difference exceeds tolerance")
         self._save()
 
     def sensitivity(self):
@@ -478,15 +499,20 @@ class Tuning:
             if not training["passed"]:
                 return "rejected_training", None
             report = self.validator.validate(loaded, self.evidence.validation_data, evaluate)
-            # Verify the winning physical parameters under finer numeric settings as well.
+            # Retest under the explicitly selected qualification policy.
             final_checks = []
-            for change in self.template.refinements:
+            changes = (
+                (None,)
+                if self.template.qualification_mode == "repeatability"
+                else self.template.refinements
+            )
+            for change in changes:
                 finer = self.evaluate_batch(
                     trials,
                     self.evidence.train_data,
                     "validation",
                     asset=loaded,
-                    template=self.template.refined(change),
+                    template=self.template if change is None else self.template.refined(change),
                 )
                 best_result, best_index = self._best
                 error = float((finer.features[0] - best_result.features[best_index]).abs().max())
@@ -498,6 +524,7 @@ class Tuning:
                     }
                 )
             report["numerical_retest"] = final_checks
+            report["qualification_mode"] = self.template.qualification_mode
             report["passed"] = report["passed"] and all(c["passed"] for c in final_checks)
             self.state.validation_report = report
             acceptance = (

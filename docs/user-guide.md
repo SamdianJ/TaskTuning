@@ -19,7 +19,7 @@ Run these commands from the repository root. On Windows, activate `.venv\Scripts
 | no extra | NumPy + PyTorch, GridSearch, headless scoring and USDA export |
 | cma | CMA-ES optimizer |
 | gl | Pyglet playback of saved traces |
-| dev | Pytest and Ruff |
+| dev | Pytest, Ruff, pre-commit and package build tools |
 | cable | SciPy for the optional real-cable simulator adapters; Newton is installed separately |
 
 The examples under `examples/` are repository examples, not part of the installed core API. Run them from a checkout. CPU Torch is sufficient for the generic demos and archive verification. The real cable calibration uses Newton VBD with Warp CUDA for physics and CPU Torch for scoring. Install the pinned Newton checkout (plus the SLS patch for stage C) using the [cable environment instructions](../examples/cable_calibration/README.md#5-construct-or-rerun-a-stage-with-newton). The cable extra alone does not install this solver. The recorded environment is documented there separately from the generic package requirements.
@@ -77,6 +77,14 @@ Use [the synthetic factories](../src/task_tuning/examples.py) as the smallest co
 9. Compose a Tuning and call its existing `run()` once.
 
 Asset's default JSON export contains parameters, adapter type and constructor configuration. It still needs the same adapter and template to create a simulator. Override export/reload for a different physical asset format.
+
+### Numerical qualification policy
+
+`Template` defaults to `qualification_mode="refinement"`. At least one actual change to numerical settings or discretization is required; an empty refinement list never silently disables qualification.
+
+For a deliberately fixed solver configuration, select `qualification_mode="repeatability"` and `refinements=()`. The lifecycle runs independent environments with identical settings and seeds at representative parameters, then repeats the selected candidate after export/reload. The tolerance still compares normalized residual features. This checks repeatability with fixed seeds, not variability across random seeds or numerical convergence. Search is rejected if the comparison exceeds the tolerance.
+
+The numerical analysis records `mode="repeatability"` and `scope="fixed_configuration_only"`; the final validation report and saved template also retain the selected policy. An accepted result is conditional on that policy. Budget reservation includes the final repeated evaluation. Combining this mode with refinements raises an error. It is not selected automatically for cable cases.
 
 ## 5. Scores and thresholds
 
