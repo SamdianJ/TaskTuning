@@ -1,5 +1,8 @@
 # Repository instructions
 
+Read [CODING_GUIDELINES.rst](CODING_GUIDELINES.rst) for source code and public API
+conventions. For reviews, also apply [REVIEW_GUIDELINES.rst](REVIEW_GUIDELINES.rst).
+
 ## Portable, project-owned content
 
 - Do not commit developer-machine paths, usernames, private environment names,

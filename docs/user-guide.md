@@ -16,13 +16,13 @@ Run these commands from the repository root. On Windows, activate `.venv\Scripts
 
 | Extra | Purpose |
 |---|---|
-| no extra | NumPy + PyTorch, GridSearch, headless scoring and USDA export |
+| no extra | NumPy, GridSearch, headless scoring and USDA export |
 | cma | CMA-ES optimizer |
 | gl | Pyglet playback of saved traces |
-| dev | Pytest, Ruff, pre-commit and package build tools |
+| dev | Ruff, pre-commit and package build tools |
 | cable | SciPy for the optional real-cable simulator adapters; Newton is installed separately |
 
-The examples under `examples/` are repository examples, not part of the installed core API. Run them from a checkout. CPU Torch is sufficient for the generic demos and archive verification. The real cable calibration uses Newton VBD with Warp CUDA for physics and CPU Torch for scoring. Install the pinned Newton checkout (plus the SLS patch for stage C) using the [cable environment instructions](../examples/cable_calibration/README.md#5-construct-or-rerun-a-stage-with-newton). The cable extra alone does not install this solver. The recorded environment is documented there separately from the generic package requirements.
+The examples under `examples/` are repository examples, not part of the installed core API. Run them from a checkout. The generic demos and archive verification run on the CPU. The real cable calibration uses Newton VBD with Warp CUDA for physics and NumPy on the CPU for scoring. Install the pinned Newton checkout (plus the SLS patch for stage C) using the [cable environment instructions](../examples/cable_calibration/README.md#5-construct-or-rerun-a-stage-with-newton). The cable extra alone does not install this solver. The recorded environment is documented there separately from the generic package requirements.
 
 ## 2. Run a complete synthetic calibration
 
@@ -39,6 +39,26 @@ The workspace root is reusable. Every new Tuning instance allocates a new run di
 CLI exit code 0 means the result is accepted; 1 means that a completed demo did not produce an accepted result. Inspect both `acceptance` and `termination_reason` instead of assuming every nonzero exit is a program crash.
 
 ## 3. Use the Python API
+
+Import core objects directly from `task_tuning`. Its `__all__` is the
+supported core API:
+
+| Purpose | Public objects |
+|---|---|
+| Lifecycle and result | `Tuning`, `TuningResult`, `RunState` |
+| Evidence and observations | `Evidence`, `Experiment`, `Trace`, `Episode` |
+| Simulation | `Asset`, `Environment`, `BatchEnvironment`, `SimulationError`, `Template`, `Rollout` |
+| Search and evaluation | `Parameter`, `Parameters`, `Optimizer`, `GridSearch`, `CMAES`, `Evaluator`, `TrialBatch`, `BatchResult` |
+| Decisions and validation | `Decision`, `DecisionResult`, `Validator`, `Play` |
+
+For example, `from task_tuning import Episode, Rollout` supplies the
+episode record and execution member for a custom rollout. `Episode` identifies
+one trial, experiment and repeat, together with its status, trace, error and
+applied parameters. `BatchResult.episode_records` retains these records.
+
+The separate `task_tuning.examples` module provides the bundled synthetic
+demo factory and its asset/environment classes; it does not define the core
+lifecycle. Use it to try the API with an already assembled demo:
 
 ```python
 from task_tuning.examples import make_tuning
@@ -64,7 +84,7 @@ Use a fresh instance for each run. Do not call `prepare()` followed by `run()` o
 
 ## 4. Assemble your own case
 
-Use [the synthetic factories](../src/task_tuning/examples.py) as the smallest complete examples, and [the cable factory](../examples/cable_calibration/run.py) for real observations and custom solver members.
+Use [the bundled synthetic demo helpers](../task_tuning/examples.py) for complete demo instances, and [the cable factory](../examples/cable_calibration/run.py) as an example of assembling real observations and custom solver members through the public API.
 
 1. **Evidence:** create Experiment objects with reference `[T,D]`, times `[T]`, broadcastable positive scales, a Boolean `[T,D]` mask, weights and acquisition-group IDs. Separate training and validation acquisition groups. Slicing one recording does not create an independent experiment.
 2. **Parameters:** define units, bounds, baselines and linear/log transforms. The asset baseline must match exactly. Define only the parameters you are actually fitting.
@@ -85,6 +105,28 @@ Asset's default JSON export contains parameters, adapter type and constructor co
 For a deliberately fixed solver configuration, select `qualification_mode="repeatability"` and `refinements=()`. The lifecycle runs independent environments with identical settings and seeds at representative parameters, then repeats the selected candidate after export/reload. The tolerance still compares normalized residual features. This checks repeatability with fixed seeds, not variability across random seeds or numerical convergence. Search is rejected if the comparison exceeds the tolerance.
 
 The numerical analysis records `mode="repeatability"` and `scope="fixed_configuration_only"`; the final validation report and saved template also retain the selected policy. An accepted result is conditional on that policy. Budget reservation includes the final repeated evaluation. Combining this mode with refinements raises an error. It is not selected automatically for cable cases.
+
+### Reload saved TaskTuning assets
+
+Saved assets use the `task-tuning-asset/1` schema and retain the public
+`task_tuning.examples` class names. Reload an existing export with the
+matching asset class and constructor configuration.
+
+### Import compatibility
+
+The former core module paths (`asset`, `data`, `decision`, `evaluator`, `evidence`,
+`optimizer`, `parameters`, `play`, `rollout`, `template`, `tuning`, `validator`)
+remain deprecated compatibility aliases. Replace imports such as
+`from task_tuning.data import Episode` with
+`from task_tuning import Episode`. No removal release is scheduled; removal
+requires an agreed transition under the project's deprecation policy. Internal
+helpers are outside the supported API.
+
+The documented `task_tuning.examples` helpers and the `task-tuning` and
+`python -m task_tuning` entry points remain available. Built-in demo assets retain the type names
+stored in existing asset exports, so implementation reorganization does not
+require converting those exports. Externally defined asset classes retain their
+own module and class identities.
 
 ## 5. Scores and thresholds
 
@@ -122,7 +164,7 @@ workspace/
   <run-id>/
     resolved.json
     run_state.json
-    batches/*.pt
+    batches/*.json
     checkpoints/*.pkl
     candidate_asset.json       # once candidate export is reached
     result.json
@@ -133,9 +175,14 @@ workspace/
       manifest.json
 ```
 
-Batch/checkpoint references are relative to the run directory. Read tensor archives with `torch.load(path, weights_only=True)`. Checkpoints capture optimizer state; automatic resume is not implemented.
+Batch/checkpoint references are relative to the run directory. Batch records are JSON; nonfinite values, such as the objectives of failed trials, are written as `null`. Checkpoints capture optimizer state; automatic resume is not implemented.
 
 `resolved.json` stores observations, frozen settings, identities and versions. `run_state.json` records budget use and decisions. Release files include rebuilding conditions; candidate parameters alone are insufficient.
+
+New runs record production source hashes using paths relative to the installed
+package, covering public entry points and nested implementation files. Test
+sources are excluded. A source reorganization changes the code identity of new
+runs; retained historical run records and their hashes remain unchanged.
 
 ## 8. Playback
 
@@ -162,9 +209,27 @@ These CLI commands run a new demo, then display saved comparison traces. Playbac
 ## 10. Checks
 
 ```bash
-PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -q
+python -m task_tuning.tests
 python -m examples.cable_calibration.verify
-ruff check src tests examples/cable_calibration/run.py examples/cable_calibration/verify.py
+ruff check task_tuning examples/cable_calibration/run.py examples/cable_calibration/verify.py
 ```
 
-The frozen cable backend files preserve historical source bytes and formatting for provenance. New factory/verification code is checked separately. See the case README for optional solver-dependent construction checks and their limits.
+The cable backends use NumPy arrays, with source revisions tracked in Git. Case provenance retains the original run and input-evidence identities. Factory and verification code are checked separately from the solver adapters. See the case README for solver-dependent construction checks and their scope.
+
+## Running candidates together
+
+The oscillator example can integrate several candidates in one environment:
+
+```python
+from task_tuning.examples import make_tuning
+
+tuning = make_tuning("oscillator", optimizer="grid", batched=True, worlds=4)
+result = tuning.run()
+```
+
+An asset opts in by implementing `Asset.create_batch_environment`. Its
+`BatchEnvironment` reports the applied parameters for each member and returns
+one `Trace` or `SimulationError` per candidate, in input order. Each chunk
+uses one experiment and repeat. `Rollout(worlds=4)` limits the candidates per
+chunk. Assets with only `create_environment` continue to use one environment
+per episode with the configured thread capacity.

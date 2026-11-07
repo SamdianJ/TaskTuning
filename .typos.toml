@@ -1,0 +1,5 @@
+[default.extend-words]
+# Level-of-detail identifier in the calibration workflow diagram.
+lod = "lod"
+# Vendor name in the archived CAE report.
+Synopsys = "Synopsys"

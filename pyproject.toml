@@ -10,13 +10,13 @@ readme = "README.md"
 license = "Apache-2.0"
 license-files = ["LICENSE", "NOTICE"]
 requires-python = ">=3.11"
-dependencies = ["numpy>=1.26", "torch>=2.2"]
+dependencies = ["numpy>=1.26"]
 
 [project.optional-dependencies]
 cma = ["cma>=4,<5"]
 cable = ["scipy>=1.11"]
 gl = ["pyglet>=2.1,<3"]
-dev = ["pytest>=8", "ruff==0.16.10", "pre-commit>=4,<5", "build>=1,<2"]
+dev = ["ruff==0.16.10", "pre-commit>=4,<5", "build>=1,<2"]
 
 [project.urls]
 Upstream = "https://github.com/newton-physics/newton-calibration"
@@ -25,18 +25,11 @@ Upstream = "https://github.com/newton-physics/newton-calibration"
 task-tuning = "task_tuning.__main__:main"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+include = ["task_tuning*"]
+exclude = ["task_tuning.tests*"]
 
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-pythonpath = ["src"]
-addopts = "-ra"
+[tool.setuptools.exclude-package-data]
+task_tuning = ["tests/**"]
 
 [tool.ruff]
-line-length = 100
-target-version = "py311"
-# Preserve archived adapter snapshots and their recorded hashes.
-extend-exclude = ["examples/cable_calibration/backends"]
-
-[tool.ruff.lint]
-select = ["E", "F", "I"]
+extend = "ruff-newton.toml"
