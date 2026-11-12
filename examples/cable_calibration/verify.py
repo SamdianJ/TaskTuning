@@ -1,16 +1,17 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Newton Developers
+# SPDX-License-Identifier: Apache-2.0
+
 """Re-score archived cable traces on CPU; never starts Newton or an optimizer."""
 
 import json
 from pathlib import Path
 
 import numpy as np
-import torch
 
-from task_tuning import Evidence, Experiment, Trace
-from task_tuning.data import Episode
+from task_tuning import Episode, Evidence, Experiment, Trace
 
-from .backends.a.validation import CableEvaluator
-from .backends.c.staged_evaluator import DistalDynamicEvaluator
+from .backends.staged_evaluator import DistalDynamicEvaluator
+from .backends.validation import CableEvaluator
 
 CASE = Path(__file__).resolve().parent
 
@@ -30,14 +31,12 @@ def verify():
         for key, target in expected.items():
             stage, name = key.split("__", 1)
             exp = experiments[name]
-            values = torch.from_numpy(archive[key])
-            if values.shape != exp.reference.shape or not torch.isfinite(values).all():
+            values = archive[key]
+            if values.shape != exp.reference.shape or not np.isfinite(values).all():
                 raise ValueError(f"Invalid archived trace: {key}")
             error = (values - exp.reference)[exp.mask] * 1000
-            rmse, maximum = float(error.square().mean().sqrt()), float(error.abs().max())
-            np.testing.assert_allclose(
-                [rmse, maximum], [target["rmse_mm"], target["max_mm"]], rtol=0, atol=1e-8
-            )
+            rmse, maximum = float(np.sqrt(np.square(error).mean())), float(np.abs(error).max())
+            np.testing.assert_allclose([rmse, maximum], [target["rmse_mm"], target["max_mm"]], rtol=0, atol=1e-8)
             evaluator = DistalDynamicEvaluator() if stage in ("Bstar", "C") else CableEvaluator()
             episode = Episode("archived", name, 0, "completed", Trace(exp.times, values))
             score = evaluator.score_batch((episode,), ("archived",), (exp,))
@@ -57,9 +56,7 @@ def verify():
     comparison = json.loads((CASE / "archive/C-comparison.json").read_text())
     for stage, label in (("Bstar", "Kelvin best"), ("C", "SLS best")):
         target = comparison["metrics"]["noplug_release"][label]["objective"]
-        np.testing.assert_allclose(
-            results[f"{stage}__noplug_release"]["objective"], target, rtol=0, atol=1e-10
-        )
+        np.testing.assert_allclose(results[f"{stage}__noplug_release"]["objective"], target, rtol=0, atol=1e-10)
     before = results["Bstar__noplug_release"]["objective"]
     after = results["C__noplug_release"]["objective"]
     return {

@@ -1,6 +1,6 @@
 ---
 name: tuning-environment
-description: Design or revise Asset, Template, Rollout, and Play for task_tuning calibration, including physical and experimental conditions, numerical accuracy, parameter binding, parallel simulation, and comparisons. Use for environment and execution decisions; never promote an old case's numerics to universal defaults.
+description: Design or revise Asset, Template, Rollout, and Play for calibration with task_tuning, including physical and experimental conditions, numerical accuracy, parameter binding, parallel simulation, and comparisons. Use for environment and execution decisions; never promote an old case's numerics to universal defaults.
 ---
 
 # Tuning Environment
@@ -20,6 +20,8 @@ For every setting record value, units, source, backend field, reason for fixing 
 Check actual solver binding and readback, derived parameter mappings, and independent physical benchmarks. Qualify time step, space, and iterations across representative loads, attachments, contacts, and parameter ranges. A smaller time step is not automatically more accurate. Define static equilibrium, dynamic initialization, release, and physical versus numerical damping separately.
 
 Translate physical error budgets to Evaluator features with the actual scale, weights, mask, and sample count. A frozen dictionary does not establish backend correctness. If a required locked setting cannot pass qualification, report the gap; do not manufacture a pass.
+
+Template defaults to `qualification_mode="refinement"` and requires actual refinements. Only an explicit fixed-configuration decision permits `qualification_mode="repeatability"` with no refinements. That mode repeats the same settings and seeds; it does not prove convergence or cross-seed robustness. Record its `fixed_configuration_only` scope and retain independent accuracy checks as separate requirements. Never choose repeatability merely to bypass failed refinement.
 
 Run qualification only within the authorized scope and budget. Record standalone setup experiments separately: they are not automatically counted by RunState.
 

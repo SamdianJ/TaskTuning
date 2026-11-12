@@ -1,0 +1,21 @@
+TaskTuning
+
+This repository includes TaskTuning code contributed by Lightwheel.
+Copyright 2026 Lightwheel.
+Lightwheel's original code is contributed under the Apache License, Version 2.0.
+
+This distribution incorporates runtime improvements from Newton Calibration
+(https://github.com/newton-physics/newton-calibration) at revision
+9ed697ccc7be855e3078b78eb365921c9b7e5502. Imported source files retain their
+Newton Developers copyright and Apache-2.0 notices.
+
+CODING_GUIDELINES.rst and REVIEW_GUIDELINES.rst retain their CC-BY-4.0 notices
+and upstream attribution. The CC-BY-4.0 license text is included in LICENSE-DOCS.
+
+The cable example contains an adaptation patch derived from Newton.
+Its upstream notices and license are retained in
+examples/cable_calibration/solver/NEWTON-LICENSE.md.
+Source revisions and hashes are recorded alongside the patch.
+
+Archived cable observations, outputs and reports retain their provenance.
+Historical experimental results are not new validation results for this distribution.

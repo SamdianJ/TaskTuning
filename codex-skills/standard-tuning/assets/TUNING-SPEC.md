@@ -44,6 +44,7 @@ Separate resolved facts, pending checks, unresolved issues, and limited assumpti
 - Unknown but fixed quantities and impact:
 - Equilibrium, dynamic initial state, driving/release:
 - Independent benchmarks and representative time/space/iteration checks:
+- Qualification policy (`refinement` or explicitly selected fixed-configuration `repeatability`) and claim limits:
 - Physical error budget to feature-space tolerance:
 - Rollout capacity/isolation/readback/device/failure/deadline:
 - Play data, physical time/coordinates, GL/USD limits:

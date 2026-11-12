@@ -1,6 +1,6 @@
 # Cable calibration: A → B → C
 
-[Repository](../../README.md) · [Specification](TUNING-SPEC.md) · [Online English report](https://samdianj.github.io/TaskTuning/examples/cable_calibration/reports/cable_calibration_en.html) · [Online Chinese report](https://samdianj.github.io/TaskTuning/examples/cable_calibration/reports/cable_calibration_zh.html)
+[Repository](../../README.md) · [Specification](TUNING-SPEC.md) · [English HTML report](reports/cable_calibration_en.html) · [Chinese HTML report](reports/cable_calibration_zh.html)
 
 This example follows a real 17 cm free cable from a stiffness/damping fit, through a shared clamp-angle correction, to a standard linear solid (SLS) bending model. It includes processed measurements, archived predictions, the actual stage adapters, and factories for new runs.
 
@@ -115,7 +115,7 @@ The plugged data initially served as holdout, but later model decisions used the
 
 ### Recorded simulation environment
 
-The original A/B/B*/C calibration ran locally in a Conda environment named `newton-dev`. The environment name is only a historical label; a new installation may use any name. Newton executes the cable physics, Warp supplies its GPU runtime, and TaskTuning/PyTorch manage calibration and scoring in the same Python process.
+Newton executes the cable physics, Warp supplies its GPU runtime, and TaskTuning/PyTorch manage calibration and scoring in the same Python process.
 
 | Component | Recorded version or setting | Role |
 |---|---|---|
@@ -132,27 +132,33 @@ Python/Torch/NumPy/CMA versions are retained in each [stage configuration](confi
 
 The `versions.device=cpu` field in exported configurations describes TaskTuning scoring. The separate `template.numeric_settings.device=cuda:0` selects Newton/Warp simulation. A CPU-only PyTorch build can therefore coexist with GPU cable physics.
 
+### Solver compatibility
+
+Stage C requires the recorded base plus `solver/sls-adapted.patch`. The factory checks three solver-file hashes and the actual import location. A released package or another branch is not interchangeable with this pinned source.
+
+The adapter uses `compute_geometric_rod_kappa_cached_z`, the solver moment/strain arrays, and `_rigid_pose_rebaseline_mask` to initialize and preserve material history from observed pre-release motion. These private bindings are specific to the pinned solver. A replacement solver or public API must reproduce the same initialization and trajectory behavior before its revision and hashes are updated.
+
 ### Install the pinned solver
 
 Use a separate environment if an existing Newton installation must remain intact. Python 3.12 matches the recorded minor version. Activate that environment and use its `python -m pip` for all installations below. These instructions target the recorded Linux setup; other platforms have not been qualified for this cable example.
 
-The TaskTuning `cable` extra installs SciPy, not Newton. A plain `pip install newton` or the current tip of the SLS branch does not select the tested solver sources. Install the pinned checkout and apply the archived adaptation as shown, rather than substituting a same-named package or another revision.
+The `cable` extra installs SciPy, not Newton. A plain `pip install newton` or the current tip of the SLS branch does not select the tested solver sources. Install the pinned checkout and apply the archived adaptation as shown, rather than substituting a same-named package or another revision.
 
-From the TaskTuning repository root:
+From the repository root:
 
 ```bash
 python -m pip install -e ".[cable,cma]"
-git clone https://github.com/SamdianJ/newton.git ../newton-task-tuning-base
-git -C ../newton-task-tuning-base checkout --detach d37f4d3d341ccce1e06a1dff21e9a054759b4855
-python -m pip install -e ../newton-task-tuning-base "warp-lang==1.17.0"
+git clone https://github.com/newton-physics/newton.git ../task-tuning-base
+git -C ../task-tuning-base checkout --detach d37f4d3d341ccce1e06a1dff21e9a054759b4855
+python -m pip install -e ../task-tuning-base "warp-lang==1.17.0"
 
-git -C ../newton-task-tuning-base worktree add --detach ../newton-task-tuning-sls d37f4d3d341ccce1e06a1dff21e9a054759b4855
-git -C ../newton-task-tuning-sls apply "$PWD/examples/cable_calibration/solver/sls-adapted.patch"
+git -C ../task-tuning-base worktree add --detach ../task-tuning-sls d37f4d3d341ccce1e06a1dff21e9a054759b4855
+git -C ../task-tuning-sls apply "$PWD/examples/cable_calibration/solver/sls-adapted.patch"
 
-python -m examples.cable_calibration.run --stage A --newton-source ../newton-task-tuning-base
-python -m examples.cable_calibration.run --stage B --newton-source ../newton-task-tuning-base
-python -m examples.cable_calibration.run --stage Bstar --newton-source ../newton-task-tuning-base
-python -m examples.cable_calibration.run --stage C --newton-source ../newton-task-tuning-sls
+python -m examples.cable_calibration.run --stage A --newton-source ../task-tuning-base
+python -m examples.cable_calibration.run --stage B --newton-source ../task-tuning-base
+python -m examples.cable_calibration.run --stage Bstar --newton-source ../task-tuning-base
+python -m examples.cable_calibration.run --stage C --newton-source ../task-tuning-sls
 ```
 
 ### Check the active interpreter and runtime
@@ -163,19 +169,17 @@ After installation, check the interpreter, imported solver path, package version
 python - <<'PY'
 import sys
 import newton
-import torch
 import warp as wp
 
 print("Python:", sys.version)
 print("Interpreter:", sys.executable)
 print("Newton:", newton.__file__)
-print("Torch:", torch.__version__, "Torch CUDA available:", torch.cuda.is_available())
 print("Warp:", wp.__version__)
 print("Warp devices:", wp.get_devices())
 PY
 ```
 
-For the archived CUDA settings, Warp must discover a CUDA device and the selected `cuda:0` must be usable with its NVIDIA driver. `torch.cuda.is_available() == False` is expected with CPU PyTorch and does not diagnose Warp's CUDA support. The factory separately checks the requested Newton source and pinned VBD hashes. Stage C imports the patched checkout selected by `--newton-source`, even when the base checkout is the environment's editable installation.
+For the archived CUDA settings, Warp must discover a CUDA device and the selected `cuda:0` must be usable with its NVIDIA driver. The factory separately checks the requested Newton source and pinned VBD hashes. Stage C imports the patched checkout selected by `--newton-source`, even when the base checkout is the environment's editable installation.
 
 This preflight initializes device discovery but does not simulate the cable. Successful imports/device discovery and factory construction are preliminary checks; actual numerical qualification occurs inside a new authorized `run()`.
 
@@ -187,15 +191,15 @@ To launch a **new** calibration, add --run and select a workspace:
 
 ```bash
 python -m examples.cable_calibration.run --stage C \
-  --newton-source ../newton-task-tuning-sls \
+  --newton-source ../task-tuning-sls \
   --workspace workspace/cable-sls --run
 ```
 
 The archived Decision configurations cap their own run time at 740 s (A), 2180 s (B), 480 s (B*), and 2200 s (C). These are formal run budgets, not all historical setup/diagnostic costs. New qualification can stop a run before search. Runtime, recovered values, and acceptance are not guaranteed to reproduce exactly across hardware or dependencies. A nonaccepted result returns CLI exit code 1.
 
-The recorded simulations used Warp CUDA on an RTX 5070 Ti Laptop GPU; generic Torch scoring can remain on CPU. --device cpu is an explicit change of numerical conditions and requires new qualification. The factory never reuses a historical qualification pass.
+The recorded simulations used Warp CUDA on an RTX 5070 Ti Laptop GPU; scoring runs on the CPU. --device cpu is an explicit change of numerical conditions and requires new qualification. The factory never reuses a historical qualification pass.
 
-During repository preparation, the generic tests, synthetic demos, and archived cable scoring were run locally; all four Newton factories were constructed, but the cable calibration searches were not rerun. Those packaging checks therefore do not constitute a fresh qualification of the Newton/CUDA simulation environment.
+Core tests, archive scoring, factory construction, and trajectory replay serve different purposes. None substitutes for a new numerical qualification and independent validation of a changed Newton/CUDA environment.
 
 ## 6. Repository contents and provenance
 
@@ -204,14 +208,43 @@ During repository preparation, the generic tests, synthetic demos, and archived 
 | [data](data/) | Processed observations, normalized experiments, prehistory, compressed numeric traces |
 | [configs](configs/) | Portable stage configurations, parameters, fixed settings, splits, budgets |
 | [archive](archive/) | Original outcomes, summaries, diagnostics, expected metrics, provenance |
-| [backends](backends/) | Stage-specific snapshots from the actual archived runs |
+| [backends](backends/) | Historical adapters with byte-identical stage copies shared |
 | [solver](solver/) | Adapted SLS patch, upstream provenance, expected hashes, Newton license |
 | [reports](reports/) | Self-contained English and retained Chinese HTML reports |
 | [verify.py](verify.py) | CPU archive verification |
 | [run.py](run.py) | Factory/CLI using the standard Tuning lifecycle |
 
-Adapter duplication is intentional: historical stages used different source snapshots. The factory assembles these adapters with portable configuration. It performs a fresh run and does not pretend to resume a historical checkpoint.
+The factory selects the historical implementation required by each stage:
 
-[provenance.json](archive/provenance.json) retains original source hashes and exported-file hashes. Machine-local paths in records were replaced with descriptive placeholders; report links were relocated; this specification and the asset note were translated/curated in English. The HTML reports embed their figures and can be opened locally after download from [reports](reports/). Their source links open GitHub; the language switch works online or with both files in the same folder.
+| Stage | Simulation adapter and rollout | Scoring |
+|---|---|---|
+| A | `backends/a/` | Shared `CableEvaluator` |
+| B | `backends/b/` | Shared `CableEvaluator` |
+| B* | `backends/b/` (identical to B) | Shared `DistalDynamicEvaluator` |
+| C | `backends/c/`, including the SLS extension | Shared `DistalDynamicEvaluator` |
 
-The SLS implementation originated in the [Newton fork](https://github.com/SamdianJ/newton/tree/SamiulJ/vbd-cable-viscoelasticity), upstream revision 72eca36c70e88d1eb0cc540da7a7a4ea44fb4b98. The bundled patch is the tested adaptation onto the pinned base, not an instruction to use the current branch tip. Newton-derived code retains its upstream notices and [Apache 2.0 license](solver/NEWTON-LICENSE.md); see [SLS provenance](solver/sls-provenance.json).
+All stages share `backends/validation.py`; B* and C share
+`backends/staged_evaluator.py`. Only byte-identical copies are consolidated.
+A retains its original boundary/frame handling and readback tolerances; C retains
+its SLS initialization hooks and environment selection. `newton_backend.py` builds
+and advances the physical model, while `rollout.py` batches candidates and handles
+execution status. They serve different responsibilities.
+
+The factory assembles these adapters with portable configuration. It performs a
+fresh run and does not pretend to resume a historical checkpoint. New run source
+hashes include both the selected stage directory and shared scoring modules.
+
+[provenance.json](archive/provenance.json) records the four historical run IDs,
+hashes of their original resolved configurations and results, and fingerprints of
+the original observation, prehistory, and asset-description files. These hashes
+identify records before portable export; they are not checksums of the current
+bundled files. Git tracks bundled-file revisions and the earlier export manifest.
+Historical outcomes remain in the stage result files; solver provenance is in
+[solver](solver/).
+
+The specification and asset note are curated English exports. The HTML reports
+embed their figures and can be opened locally from [reports](reports/). Source
+links resolve within the checkout; keep both reports in the same folder for
+language switching. See [local preview instructions](../../docs/publishing-results.md).
+
+The bundled SLS patch is the tested adaptation onto the pinned Newton base. Its original source revision `72eca36c70e88d1eb0cc540da7a7a4ea44fb4b98`, adaptation history, and patch checksum are retained as provenance; reconstruction uses the official base and bundled patch. Newton-derived code retains its upstream notices and [Apache 2.0 license](solver/NEWTON-LICENSE.md); see [SLS provenance](solver/sls-provenance.json).
