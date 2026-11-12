@@ -77,7 +77,7 @@
 <tr id="member-play"><th scope="row"><a href="task_tuning/play.py">Play</a></th><td>消费已保存的轨迹，生成标定前后对比、回放及展示产物。</td><td><code>compare()/export_usd()</code>；通用 USD 输出是点轨迹动画，不是完整物理资产。</td></tr>
 </tbody></table></div>
 <div class="ownership"><article><h3>Tuning 拥有唯一的 RunState</h3><p>RunState 记录输入身份、阶段、预算、批次、最优候选、分析与验收结论，由 Tuning 统一更新。它是运行状态，不是第 11 个功能成员。灵敏度和可辨识性分析同样属于 Tuning。</p></article><article><h3>实现能力与结论范围</h3><p>内置优化器为 GridSearch 与 CMA-ES，自动断点续跑尚未实现。具体求解器的设备、并行能力和数值精度需要案例验证；合成示例的成功不代表真实线缆已通过验收。</p></article></div>
-<p class="references">内容来源：<a href="examples/cable_calibration/reports/cable_calibration_en.html#module">线缆报告 · Tuning module ↗</a><a href="docs/tuning-class-diagram.md">对象关系与数据契约 ↗</a></p>
+<p class="references">内容来源：<a href="pipeline.html#modules">线缆报告 · Tuning module ↗</a><a href="docs/tuning-class-diagram.md">对象关系与数据契约 ↗</a></p>
 </section>
 <section class="chapter" id="skills" aria-labelledby="skills-title">
 <div class="chapter-heading"><span class="chapter-number">03</span><div><p class="eyebrow">FROM INTENT TO AN EXECUTABLE CASE</p><h2 id="skills-title">Skills 把需求装配为可运行的 Tuning</h2><p>五个 Skills 是供编码助手使用的配置与实现指引。它们读取证据、澄清关键未知项、维护一份案例规格，并生成真实的工厂与运行入口；运行时仍由 task_tuning 负责。</p></div></div>
@@ -107,7 +107,7 @@ if __name__ == "__main__":
     print(result.termination_reason)
     print(result.acceptance)</code></pre></article></div>
 <p class="scope-note"><strong>构造与执行的边界：</strong>导入或构造实例不运行仿真；<code>prepare()</code> 会执行基线与数值资格检查，不能当作静态检查，也不能先调用它再调用 <code>run()</code>。每次运行使用新实例与独立运行目录。</p>
-<p class="references"><a href="docs/codex-skills.md">Skills 安装与使用 ↗</a><a href="codex-skills/standard-tuning/assets/TUNING-SPEC.md">案例规格模板 ↗</a><a href="examples/cable_calibration/reports/cable_calibration_en.html#skills">线缆报告 · Skills module ↗</a></p>
+<p class="references"><a href="docs/codex-skills.md">Skills 安装与使用 ↗</a><a href="codex-skills/standard-tuning/assets/TUNING-SPEC.md">案例规格模板 ↗</a><a href="docs/codex-skills.md">线缆报告 · Skills module ↗</a></p>
 </section>
 <section class="chapter" id="usage" aria-labelledby="usage-title">
 <div class="chapter-heading"><span class="chapter-number">04</span><div><p class="eyebrow">TWO WAYS TO USE TASKTUNING</p><h2 id="usage-title">独立完成标定，也能作为 Agent 的精调工具</h2><p>两种方式共享同一套运行核心。区别在于：任务定义是已经明确，还是由外层 Agent 在仿真重建过程中逐步形成。每次进入 Tuning 时，都需要一个明确、可检查的任务定义。</p></div></div>

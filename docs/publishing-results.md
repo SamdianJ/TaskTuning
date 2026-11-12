@@ -19,7 +19,9 @@ Stop the server when finished.
 
 - [Framework overview (English, default)](../index_en.html)
 - [Framework overview (Chinese)](../index_cn.html)
-- [Calibration examples: cable](../examples/index.html)
+- [Calibration examples: cable, plug, and task reconstruction](../examples/index.html)
+- [Agent-driven calibration pipeline](../pipeline.html)
+- [Plug calibration report](../examples/plug_calibration/reports/plug_calibration_en.html)
 - [English report](../examples/cable_calibration/reports/cable_calibration_en.html)
 - [Chinese report](../examples/cable_calibration/reports/cable_calibration_zh.html)
 - [Case and reproduction guide](../examples/cable_calibration/README.md)
@@ -27,6 +29,24 @@ Stop the server when finished.
 The HTML reports embed their figures, plots, and styles and can also be opened directly
 after download. Keep both files in the same folder for language switching. Source links
 are relative to the repository, so browsing the evidence requires the surrounding checkout.
+
+## Task results and pipeline
+
+The [results page](../examples/index.html) retains the matched before/after cable and
+plug comparisons, the task reconstruction roadmap, and the full demonstration video.
+The [plug report](../examples/plug_calibration/reports/plug_calibration_en.html#scope)
+separates the retrospective CAE comparison from the calibrated force model. Its five
+development recordings meet the stated observation criteria; numerical qualification
+and independent holdout validation remain open. The latest local force candidate is
+not the configuration used in the full-scene replay.
+
+The full video and its provenance remain in `assets/task-calibration/`. Preserve its
+complete duration, audio, and source identities when updating its web presentation.
+
+The [pipeline page](../pipeline.html) explains the six-stage workflow, member
+responsibilities, and standalone and agent-assisted use. Check its stage selector,
+qualification-mode selector, and navigation when changing the page. Use the
+[implementation status](implementation-status.md) for the current runtime boundaries.
 
 ## Update the preview image
 

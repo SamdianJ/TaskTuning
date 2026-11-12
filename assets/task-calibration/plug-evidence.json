@@ -76,5 +76,33 @@
         "sha256": "8b63900f556305826c9323b30f4be3b0488adb131fe48b05fe535b430c5337c0"
       }
     ]
+  },
+  "homepage_comparison": {
+    "scope": "Matched contact-only baseline A vs physically coupled calibrated C at 1/9600 s; worst error over five development recordings. Separate from latest 1/19200 s refinement.",
+    "before_case": "stage0_lowmu_fine_dt",
+    "after_case": "stage1_loaded_fine",
+    "dt_s": 0.00010416666666666667,
+    "improvement_formula": "100 * (1 - after / before), calculated from unrounded archived metrics",
+    "metrics": {
+      "axial_active_peak_normalized_RMSE": {
+        "before_percent": 52.76395828396655,
+        "after_percent": 4.388818811355417,
+        "relative_improvement_percent": 91.68216533768079
+      },
+      "axial_peak_relative_error": {
+        "before_percent": 65.32290259720025,
+        "after_percent": 4.175876167127424,
+        "relative_improvement_percent": 93.60733218963482
+      },
+      "lateral_active_peak_normalized_RMSE": {
+        "before_percent": 14.819121567134092,
+        "after_percent": 14.808256570971057,
+        "relative_improvement_percent": 0.07331741030541794
+      }
+    },
+    "source": {
+      "experiment_relative_path": "plug_calibration/CAE/force/cae_intermediate_retrospective_20261019/comparison.json",
+      "sha256": "6b010aa5c28cb1ad7582a7d1edb7c9a0527850301beafe483fa3c2d7d4b21229"
+    }
   }
 }

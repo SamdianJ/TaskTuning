@@ -13,6 +13,7 @@ Python 包名为 `task_tuning`，命令行为 `task-tuning`。核心使用 NumPy
 | [使用指南](docs/user-guide.md) | 安装、组合标定成员、执行任务及读取输出 |
 | [中文框架介绍](index_cn.html) · [English overview](index.html) | 流程、成员职责和实验说明，按[本地预览说明](docs/publishing-results.md)打开 |
 | [线缆案例](examples/cable_calibration/README.md) | 实测数据、归档结果、分阶段模型与求解器配置 |
+| [实验结果](examples/index.html) · [标定流程](pipeline.html) | 线缆与插头的标定前后对比、完整任务演示和流程说明 |
 | [功能与限制](docs/implementation-status.md) | 执行模式、诊断结果的适用范围和当前限制 |
 | [Codex skills](docs/codex-skills.md) | 使用随附技能配置标定任务 |
 

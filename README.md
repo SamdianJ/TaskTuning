@@ -15,6 +15,7 @@ TaskTuning turns measured observations, a simulator adapter and a parameter spac
 | [User guide](docs/user-guide.md) | Install the package, compose a calibration, and inspect its outputs |
 | [Framework overview](index.html) · [中文介绍](index_cn.html) | Explore the workflow and member responsibilities using the [local preview](docs/publishing-results.md) |
 | [Cable case study](examples/cable_calibration/README.md) | Inspect measured evidence, archived results, and the pinned solver setup |
+| [Calibration results](examples/index.html) · [Pipeline](pipeline.html) | Compare cable and plug results, view the task demo, and explore the calibration lifecycle |
 | [Capabilities and limits](docs/implementation-status.md) | Check supported execution modes and what the diagnostics establish |
 | [Codex skills](docs/codex-skills.md) | Configure calibration tasks with the bundled skills |
 

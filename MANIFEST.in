@@ -1,5 +1,6 @@
 include AGENTS.md CONTRIBUTING.md .pre-commit-config.yaml index.html .nojekyll
 include index_en.html index_cn.html
+include pipeline.html
 include README.zh-CN.md LICENSE-DOCS
 include 校准与评估主线.html
 graft docs
