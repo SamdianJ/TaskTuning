@@ -6,8 +6,8 @@
 Source Code and Public API Guidelines
 =====================================
 
-This document is the canonical source code and public API guidance for Newton
-Calibration contributors and reviewers. It applies prospectively to new code
+This document is the canonical source code and public API guidance for TaskTuning
+contributors and reviewers. It applies prospectively to new code
 and to existing code that is being changed substantially. Do not request
 unrelated cleanup or break a supported API merely to make existing code
 conform.

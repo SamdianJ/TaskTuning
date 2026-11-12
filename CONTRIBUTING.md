@@ -47,6 +47,10 @@ GitHub Actions are pinned by commit SHA. CPU CI runs tests, archive verification
 synthetic demos, package construction and a standalone wheel smoke test. This does not
 qualify a Newton/CUDA environment or rerun the cable optimization.
 
+The [cross-platform publishing guide](docs/repository-publishing.md) explains how
+to synchronize reviewed commits between GitHub and AtomGit. A repository copy
+does not establish that its hosting platform has executed the CI checks.
+
 ## Licensing and integration
 
 Existing runtime dependencies retain their own licenses: NumPy uses BSD-3-Clause
@@ -57,6 +61,9 @@ are not relicensed by this repository.
 
 Original contributions are Apache-2.0; retain third-party notices and identify new
 dependency licenses. See [NOTICE](NOTICE) for the original contribution and Newton patch.
+
+The imported coding and review guidelines retain their CC-BY-4.0 notices; include
+[LICENSE-DOCS](LICENSE-DOCS) when redistributing these documents.
 
 Use NumPy for the core runtime. CMA-ES, cable preprocessing and GL playback are
 optional extras. Newton is installed explicitly for the cable example.

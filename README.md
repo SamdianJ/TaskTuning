@@ -1,19 +1,27 @@
 # TaskTuning
 
+English · [简体中文](README.zh-CN.md)
+
 Composable, evidence-based simulation parameter calibration for the Newton ecosystem.
 
 The framework uses the `task_tuning` Python package and `task-tuning` CLI. The core remains simulator-independent; the cable example provides a Newton VBD adapter.
 
-[Contributing](CONTRIBUTING.md) · [Repository instructions](AGENTS.md) · [Apache-2.0 license](LICENSE)
+[GitHub](https://github.com/SamdianJ/TaskTuning) · [AtomGit](https://atomgit.com/SamiulJ/tasktuning) · [Contributing](CONTRIBUTING.md)
 
 TaskTuning turns measured observations, a simulator adapter and a parameter space into one traceable `Tuning.run()`. It checks numerical accuracy and local identifiability, performs batched search, reloads the candidate, and validates before releasing an asset.
 
-[Framework overview (English)](index.html) · [中文介绍](index_cn.html) · [Calibration examples](examples/index.html) · [Local preview](docs/publishing-results.md) · [User guide](docs/user-guide.md) · [Codex skills](docs/codex-skills.md) · [Cable A → B → C example](examples/cable_calibration/README.md)
+| Guide | Use it to |
+|---|---|
+| [User guide](docs/user-guide.md) | Install the package, compose a calibration, and inspect its outputs |
+| [Framework overview](index.html) · [中文介绍](index_cn.html) | Explore the workflow and member responsibilities using the [local preview](docs/publishing-results.md) |
+| [Cable case study](examples/cable_calibration/README.md) | Inspect measured evidence, archived results, and the pinned solver setup |
+| [Capabilities and limits](docs/implementation-status.md) | Check supported execution modes and what the diagnostics establish |
+| [Codex skills](docs/codex-skills.md) | Configure calibration tasks with the bundled skills |
 
 ## Quick start
 
 Python 3.11+; the core requires NumPy. Newton is **not** a core dependency.
-Run the following commands from a checkout of this repository.
+Clone this repository from GitHub or AtomGit, then run the following commands from its root directory.
 
 ```bash
 python -m venv .venv
@@ -124,3 +132,20 @@ Local SVD diagnostics are not confidence intervals or proofs of global identifia
 See [capabilities and limits](docs/implementation-status.md) and [skills usage](docs/tuning-skills-implementation.md).
 
 Reports are bundled for [local viewing](docs/publishing-results.md). See [development and validation](CONTRIBUTING.md).
+
+## Project provenance and licenses
+
+TaskTuning retains the `task_tuning` package and `task-tuning` CLI while incorporating
+runtime improvements from [Newton Calibration](https://github.com/newton-physics/newton-calibration)
+at revision `9ed697ccc7be855e3078b78eb365921c9b7e5502`. This is the calibration
+framework revision; the cable example has its own pinned Newton solver revision.
+The [user guide](docs/user-guide.md#reload-saved-tasktuning-assets) covers compatibility
+with saved TaskTuning assets.
+
+Source code and original project documentation use [Apache-2.0](LICENSE).
+The imported coding and review guidelines retain their [CC-BY-4.0](LICENSE-DOCS)
+notices. See [NOTICE](NOTICE) for attribution and the bundled Newton patch license.
+
+Maintainers can use the [cross-platform publishing guide](docs/repository-publishing.md)
+to publish the same reviewed commit on GitHub and AtomGit. The guide also explains
+which checks must be run separately from repository synchronization.
